@@ -78,6 +78,7 @@ export interface ActivityListItem {
   zone: string | null;
   venueName: string | null;
   categoryName: string | null;
+  categoryNameBn: string | null;
   categorySlug: string | null;
   hostName: string | null;
   hostAvatar: string | null;
@@ -105,6 +106,7 @@ export async function listActivities(
       zone: areas.zone,
       venueName: venues.name,
       categoryName: interests.nameEn,
+      categoryNameBn: interests.nameBn,
       categorySlug: interests.slug,
       hostName: users.name,
       hostAvatar: users.avatarUrl,

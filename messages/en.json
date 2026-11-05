@@ -72,47 +72,138 @@
     "hero": {
       "badge": "Everyone belongs · small weekly circles across Bangladesh",
       "title": "Find your people, wherever you live",
+      "titleBefore": "Find ",
       "highlight": "your people",
-      "subtitle": "APON matches you into a small circle of 4–6 people who share your interests and free time — then gives you a reason to meet up every week.",
-      "ctaPrimary": "Join your circle",
+      "titleAfter": ", wherever you live",
+      "subtitle": "APON matches you into a small circle of 4–6 people nearby who share your interests and free time — then gives you a reason to meet in real life, every week.",
+      "ctaPrimary": "Join your circle — it's free",
       "ctaSecondary": "See how it works",
+      "note": "Free to join · 2-minute setup · বাংলা & English",
       "imageAlt": "Friends laughing together over coffee at a local café",
       "stat1": "4–6 people per circle",
       "stat2": "One meetup a week",
-      "stat3": "64 districts · 12 city corporations"
+      "stat3": "64 districts · 12 city corporations",
+      "cardCircle": "Your circle is ready",
+      "cardCircleText": "5 members · Gulshan zone",
+      "cardMeetup": "Saturday, 5:00 PM",
+      "cardMeetupText": "Tea & adda at Dhanmondi Lake",
+      "cardPoll": "Time poll",
+      "cardPollText": "4 of 5 voted",
+      "cardVerified": "Every member is verified"
+    },
+    "stats": {
+      "title": "A real community, growing every week",
+      "members": "Members",
+      "upcoming": "Upcoming activities",
+      "circles": "Active circles",
+      "places": "Places covered",
+      "note": "Live numbers from the APON community."
+    },
+    "why": {
+      "eyebrow": "Why APON",
+      "title": "Making friends as an adult is hard. It shouldn't be.",
+      "subtitle": "Loneliness is rising everywhere — even in the busiest cities. APON makes the first step small, safe and regular.",
+      "card1Title": "New to a city?",
+      "card1Text": "Moved for work or study and don't know anyone nearby yet? Meet people in your own neighbourhood.",
+      "card2Title": "Friends got busy?",
+      "card2Text": "Jobs, marriage, moving abroad — old circles shrink. Build a new one around what you enjoy now.",
+      "card3Title": "Tired of screens?",
+      "card3Text": "Likes and chats aren't friendship. APON is about sitting together over tea, a walk or a game."
     },
     "how": {
       "title": "How it works",
       "subtitle": "Three small steps, and then you are meeting real people.",
       "step1Title": "Tell us about you",
-      "step1Text": "Pick your interests, your neighbourhood and the times you are usually free.",
+      "step1Text": "Pick your interests, where you live and the times you are usually free.",
+      "step1Time": "2 minutes",
       "step2Title": "Meet your circle",
-      "step2Text": "Every week we form small circles of people who actually match — same zone, same interests.",
+      "step2Text": "Every week we form small circles of people who actually match — same area, same interests, overlapping time.",
+      "step2Time": "Every Monday",
       "step3Title": "Show up, every week",
-      "step3Text": "Vote on the time, RSVP, and meet at a vetted café, park or court near you."
+      "step3Text": "Vote on the time, RSVP, and meet at an approved café, park or court near you.",
+      "step3Time": "Every week"
+    },
+    "week": {
+      "title": "A week in your circle",
+      "subtitle": "Small, regular and low-pressure — the way real friendships grow.",
+      "day1": "Monday",
+      "day1Title": "You're matched",
+      "day1Text": "Meet your 4–6 people and say hello in the circle chat.",
+      "day2": "Tuesday",
+      "day2Title": "Pick a time",
+      "day2Text": "Everyone votes on a time poll — the most popular slot wins.",
+      "day3": "Thursday",
+      "day3Title": "RSVP",
+      "day3Text": "Confirm your spot. The exact venue appears once you're in.",
+      "day4": "Weekend",
+      "day4Title": "Meet up",
+      "day4Text": "Coffee, a walk, a game — then share quick private feedback."
+    },
+    "features": {
+      "title": "Everything your circle needs",
+      "subtitle": "Simple tools that help a group of strangers become friends.",
+      "chatTitle": "Circle chat",
+      "chatText": "A private group chat for your circle only.",
+      "pollTitle": "Time polls",
+      "pollText": "Find the time that suits everyone in one tap.",
+      "activitiesTitle": "Hosted activities",
+      "activitiesText": "Join meetups led by trained, approved community hosts.",
+      "womenTitle": "Women-only circles",
+      "womenText": "Prefer it? Get matched only into women-only circles and activities.",
+      "languageTitle": "বাংলা & English",
+      "languageText": "Use APON fully in Bangla or English — switch anytime.",
+      "nationwideTitle": "Nationwide",
+      "nationwideText": "Every district, upazila, union and city neighbourhood."
+    },
+    "activities": {
+      "title": "Happening soon",
+      "subtitle": "A taste of what members are doing this week. Sign in to see details and RSVP.",
+      "empty": "New activities are added every week — be the first to join.",
+      "browse": "Browse all activities",
+      "signInToJoin": "Sign in to join"
     },
     "categories": {
       "title": "Things your circle can do",
       "subtitle": "Every activity is hosted by a trained community host and approved before it goes live."
     },
+    "coverage": {
+      "title": "Built for all of Bangladesh",
+      "subtitle": "From Dhaka's neighbourhoods to the smallest union — pick exactly where you live and we'll match you nearby.",
+      "districts": "{count} districts",
+      "upazilas": "{count} upazilas",
+      "footnote": "{places} places: every division, district, upazila and union, plus all 12 city corporations with their thanas, wards and neighbourhoods."
+    },
     "safety": {
       "title": "Safety is the product",
       "text": "Friendship only works when people feel safe. Every part of APON is built around that.",
-      "point1Title": "Verified phone numbers",
-      "point1Text": "Everyone verifies a real phone number before joining an activity or a circle.",
+      "point1Title": "Verified members",
+      "point1Text": "Every account verifies its email, and a phone number is required before joining a circle or activity.",
       "point2Title": "Exact address only after RSVP",
       "point2Text": "Venues stay private until you are confirmed for the meetup.",
       "point3Title": "Report and block in one tap",
       "point3Text": "Report anyone or anything. Blocked people never share a circle with you.",
-      "point4Title": "Hosts and admins review",
-      "point4Text": "Every host application and every activity is reviewed by a human."
+      "point4Title": "Humans review everything",
+      "point4Text": "Every host application and every activity is reviewed by a real person.",
+      "point5Title": "Public places only",
+      "point5Text": "Meetups happen at approved cafés, parks and courts — never private homes.",
+      "point6Title": "Your data stays yours",
+      "point6Text": "Your phone and email are never shown to other members."
+    },
+    "host": {
+      "eyebrow": "For hosts",
+      "title": "Love bringing people together?",
+      "text": "Hosts run small, friendly activities — a book club, a morning walk, a badminton session — and help newcomers feel welcome.",
+      "point1": "Choose your own topic, time and approved venue",
+      "point2": "Every activity is reviewed before it goes live",
+      "point3": "Meet great people in your own area",
+      "cta": "Apply to host"
     },
     "faq": {
       "title": "Questions, answered",
       "q1": "What exactly is a circle?",
       "a1": "A circle is 4–6 people near you — in your neighbourhood, thana or upazila — with overlapping interests and availability. You keep the same circle for weeks, so friendships have time to become real.",
       "q2": "Is it free?",
-      "a2": "Joining APON is free. Some activities have a small cost (coffee, court rental) paid directly at the venue.",
+      "a2": "Joining APON is free. Some activities have a small cost (coffee, court rental) paid directly at the venue — always shown upfront.",
       "q3": "Which places do you cover?",
       "a3": "All of Bangladesh: every division, district, upazila and union, plus all 12 city corporations down to thanas, wards and neighbourhoods like Gulshan, Dhanmondi, Agrabad or Zindabazar.",
       "q4": "What if my circle is not a fit?",
@@ -120,19 +211,25 @@
       "q5": "Is there a women-only option?",
       "a5": "Yes. Turn on “women only” in your preferences and you will only be matched into women-only circles and activities.",
       "q6": "Can I host?",
-      "a6": "Yes — apply to host from the Host page. A real person reviews every application."
+      "a6": "Yes — apply to host from the Host page. A real person reviews every application.",
+      "q7": "How does matching work?",
+      "a7": "Every Monday we group people in the same area by shared interests, overlapping free time, age range and language. People you've blocked are never matched with you.",
+      "q8": "Is APON a dating app?",
+      "a8": "No. APON is for friendship and community. Meetups are in groups, in public places, and our guidelines are enforced.",
+      "more": "Still curious? Read our community guidelines."
     },
     "cta": {
       "title": "Your weekly circle starts this week",
       "text": "It takes about two minutes to set up your profile. The next matching run happens every Monday.",
-      "button": "Create your free account"
+      "button": "Create your free account",
+      "secondary": "I already have an account"
     },
     "footer": {
       "product": "Product",
       "community": "Community",
       "about": "About",
       "credits": "Photo credits",
-      "rights": "Made with care in Dhaka.",
+      "rights": "Made with care in Bangladesh.",
       "note": "APON is a community platform for meeting people in real life — not a dating app."
     }
   },
