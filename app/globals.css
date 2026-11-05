@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------------------------------------
-   Bondhu Circle design tokens
+   APON design tokens
    Cool neutral canvas, white surfaces, one teal accent, 10px radius.
    Compact by default: dense controls (36px), soft shadows on surfaces.
 --------------------------------------------------------------------------- */
@@ -43,6 +43,10 @@
   --success: #157f5f;
   --warning: #b45309;
   --info: #0369a1;
+
+  /* Brand mark colours (logo tile + "you belong" dot). */
+  --brand-tile: #0f766e;
+  --brand-accent: #fbbf24;
 
   /* Admin panel chrome (dark in both themes so the two panels never look alike). */
   --sidebar: #0d1b19;

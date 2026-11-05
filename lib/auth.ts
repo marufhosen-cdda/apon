@@ -82,7 +82,7 @@ export const auth = betterAuth({
         try {
           await sendSms(
             normalizeBdPhone(phoneNumber),
-            `Your Bondhu Circle code is ${code}. It expires in 5 minutes. Never share it.`,
+            `Your APON code is ${code}. It expires in 5 minutes. Never share it.`,
           );
         } catch (err) {
           console.warn(`[sms:otp:warn] Failed to send SMS:`, err instanceof Error ? err.message : err);
@@ -91,7 +91,7 @@ export const auth = betterAuth({
       // Lets someone sign up and in with a phone number alone.
       signUpOnVerification: {
         getTempEmail: (phoneNumber) => `${normalizeBdPhone(phoneNumber).slice(1)}@bondhu.app`,
-        getTempName: () => "Bondhu member",
+        getTempName: () => "APON member",
       },
     }),
 

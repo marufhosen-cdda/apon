@@ -1,4 +1,6 @@
-# Bondhu Circle
+<p align="center"><img src="public/brand/apon-logo.svg" alt="APON — Everyone belongs" width="360"></p>
+
+# APON — Everyone belongs
 
 Bilingual (English / বাংলা) app that matches people anywhere in Bangladesh into small weekly circles of 4–6 and gives them hosted, real-world activities to meet at.
 
@@ -14,7 +16,7 @@ npm run db:seed               # demo data + the full location tree
 npm run dev
 ```
 
-Sign in with a seeded email (e.g. `admin@bondhu.app`). OTP codes are printed by the dev server.
+Sign in with a seeded email (e.g. `admin@apon.app`). OTP codes are printed by the dev server.
 
 ## Locations (nationwide)
 
@@ -61,5 +63,14 @@ sends admins to the Admin Panel and everyone else to the User Panel.
 | --- | --- |
 | `npm run test` | unit tests (matching, waitlist, actions, geo tree, RBAC) |
 | `npm run test:e2e` | Playwright smoke test against a dev server |
+| `node scripts/generate-icons.mjs` | regenerate PWA icons, Apple icon and favicon from the APON mark |
 | `npm run geo:sync` | load/refresh the location tree only |
 | `npm run matching` / `reminders` / `feedback` | scheduled jobs |
+
+## Brand
+
+**APON** (আপন — "one's own people"). Tagline: *Everyone belongs* · *সবাই আপন*.
+
+The mark is an open ring (the circle) with a warm dot in its gap: there is always a place for you.
+Sources: `public/brand/apon-mark.svg`, `public/brand/apon-logo.svg`, `app/icon.svg` (favicon),
+`components/brand/logo.tsx` (in-app). Brand colours: teal `#0f766e`, amber `#fbbf24`.

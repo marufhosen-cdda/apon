@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 
 import { Link, usePathname } from "@/i18n/navigation";
+import { Logo } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 
 export interface AdminBadges {
@@ -120,12 +121,8 @@ function SidebarNav({ badges, onNavigate }: { badges: AdminBadges; onNavigate?: 
 function Brand() {
   const t = useTranslations("admin.nav");
   return (
-    <Link href="/admin" className="flex items-center gap-2.5 px-4 py-4">
-      <span className="grid size-8 place-items-center rounded-lg bg-sidebar-primary text-sm font-bold text-sidebar">ব</span>
-      <span className="leading-tight">
-        <span className="block text-sm font-semibold text-white">Bondhu Circle</span>
-        <span className="block text-[11px] font-medium text-sidebar-muted">{t("consoleLabel")}</span>
-      </span>
+    <Link href="/admin" className="flex items-center px-4 py-4">
+      <Logo tone="inverse" tagline={t("consoleLabel")} markClassName="size-8" />
     </Link>
   );
 }

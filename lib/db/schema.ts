@@ -16,7 +16,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 /**
- * Bondhu Circle — data model.
+ * APON — data model.
  *
  * Naming convention: camelCase TypeScript properties, snake_case SQL columns.
  * The `users`, `sessions`, `accounts`, `verifications` and `rate_limits` tables

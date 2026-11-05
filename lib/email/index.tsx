@@ -71,8 +71,8 @@ export function sendOtpEmail(input: { to: string; code: string; locale: string }
     subject: bn ? `আপনার কোড: ${input.code}` : `Your sign-in code: ${input.code}`,
     react: (
       <EmailLayout
-        preview={bn ? "আপনার Bondhu Circle সাইন-ইন কোড" : "Your Bondhu Circle sign-in code"}
-        heading={bn ? "সাইন-ইন করুন" : "Sign in to Bondhu"}
+        preview={bn ? "আপনার APON সাইন-ইন কোড" : "Your APON sign-in code"}
+        heading={bn ? "সাইন-ইন করুন" : "Sign in to APON"}
       >
         <EmailParagraph>
           {bn

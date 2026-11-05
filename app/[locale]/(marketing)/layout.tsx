@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Heart } from "lucide-react";
 
+import { Logo } from "@/components/brand/logo";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/features/nav/locale-switcher";
 import { ThemeToggle } from "@/components/features/nav/theme-toggle";
@@ -12,17 +13,18 @@ export default async function MarketingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [t, tn] = await Promise.all([getTranslations("landing"), getTranslations("nav")]);
+  const [t, tn, tc] = await Promise.all([
+    getTranslations("landing"),
+    getTranslations("nav"),
+    getTranslations("common"),
+  ]);
 
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight" aria-label="Bondhu Circle home">
-            <span className="grid size-8 place-items-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">
-              ব
-            </span>
-            <span className="hidden sm:inline">Bondhu Circle</span>
+          <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight" aria-label="APON home">
+            <Logo />
           </Link>
 
           <nav aria-label="Main" className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
@@ -57,12 +59,7 @@ export default async function MarketingLayout({
       <footer className="border-t border-border bg-card">
         <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
           <div>
-            <div className="flex items-center gap-2 font-semibold">
-              <span className="grid size-8 place-items-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">
-                ব
-              </span>
-              Bondhu Circle
-            </div>
+            <Logo tagline={tc("tagline")} markClassName="size-8" />
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
               {t("footer.note")}
             </p>
@@ -114,7 +111,7 @@ export default async function MarketingLayout({
 
         <Separator />
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-2 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:px-6">
-          <p>© {new Date().getFullYear()} Bondhu Circle</p>
+          <p>© {new Date().getFullYear()} APON · {tc("tagline")}</p>
           <p className="inline-flex items-center gap-1">
             {t("footer.rights")} <Heart className="size-3 text-primary" aria-hidden />
           </p>

@@ -9,7 +9,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
-  // Bondhu reads live data from Postgres on every request; classic dynamic
+  // APON reads live data from Postgres on every request; classic dynamic
   // rendering keeps Server Components + Server Actions predictable.
   cacheComponents: false,
   experimental: {

@@ -129,7 +129,7 @@ function buildMembers(): SeedMember[] {
 const admin: SeedMember = {
   id: "seed_admin_01",
   name: "Rafi Ahmed",
-  email: "admin@bondhu.app",
+  email: "admin@apon.app",
   phone: "+8801711111111",
   gender: "male",
   birthYear: 1992,
@@ -139,9 +139,9 @@ const admin: SeedMember = {
 };
 
 const hostProfiles: SeedMember[] = [
-  { id: "seed_host_01", name: "Nusrat Jahan", email: "nusrat@bondhu.app", phone: "+8801811111111", gender: "female", birthYear: 1994, areaSlug: "dhanmondi", locale: "bn", womenOnly: false },
-  { id: "seed_host_02", name: "Tanvir Hossain", email: "tanvir@bondhu.app", phone: "+8801911111111", gender: "male", birthYear: 1991, areaSlug: "gulshan-2", locale: "en", womenOnly: false },
-  { id: "seed_host_03", name: "Sadia Rahman", email: "sadia@bondhu.app", phone: "+8801611111111", gender: "female", birthYear: 1995, areaSlug: "mirpur-10", locale: "bn", womenOnly: false },
+  { id: "seed_host_01", name: "Nusrat Jahan", email: "nusrat@apon.app", phone: "+8801811111111", gender: "female", birthYear: 1994, areaSlug: "dhanmondi", locale: "bn", womenOnly: false },
+  { id: "seed_host_02", name: "Tanvir Hossain", email: "tanvir@apon.app", phone: "+8801911111111", gender: "male", birthYear: 1991, areaSlug: "gulshan-2", locale: "en", womenOnly: false },
+  { id: "seed_host_03", name: "Sadia Rahman", email: "sadia@apon.app", phone: "+8801611111111", gender: "female", birthYear: 1995, areaSlug: "mirpur-10", locale: "bn", womenOnly: false },
 ];
 
 // ---------------------------------------------------------------------------
@@ -236,7 +236,7 @@ async function main() {
       areaId: areaOf(p.areaSlug),
       bio:
         p.id === admin.id
-          ? "Keeping Bondhu Circle safe and useful."
+          ? "Keeping APON safe and useful."
           : "Hey! New in town, up for coffee, walks and long conversations.",
       role: p.id === admin.id ? "admin" : hostProfiles.some((h) => h.id === p.id) ? "host" : "member",
       locale: p.locale,
@@ -525,7 +525,7 @@ async function main() {
   };
 
   console.log("Seed complete:", counts);
-  console.log("\nSign in with any seeded email, e.g. admin@bondhu.app");
+  console.log("\nSign in with any seeded email, e.g. admin@apon.app");
   console.log("The 6-digit code is printed in the terminal running `npm run dev`.\n");
 }
 

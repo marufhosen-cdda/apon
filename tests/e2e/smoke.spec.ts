@@ -27,7 +27,7 @@ test.describe("public site", () => {
     const manifest = await request.get("/manifest.webmanifest");
     expect(manifest.ok()).toBe(true);
     const body = await manifest.json();
-    expect(body.name).toContain("Bondhu");
+    expect(body.name).toContain("APON");
     expect(body.icons.map((icon: { sizes: string }) => icon.sizes)).toContain("512x512");
 
     const icon = await request.get("/icons/icon-512.png");
@@ -44,7 +44,7 @@ test.describe("public site", () => {
 test.describe("member journey", () => {
   test("sign in → onboard → verify phone → RSVP reveals the venue", async ({ page }) => {
     const stamp = Date.now();
-    const email = `e2e.${stamp}@bondhu.test`;
+    const email = `e2e.${stamp}@apon.test`;
     // Valid Bangladeshi mobile format, unique per run.
     const phone = `018${String(stamp).slice(-8)}`;
 
