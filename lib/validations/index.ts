@@ -287,3 +287,23 @@ export type ActivityFormInput = z.infer<typeof activityFormSchema>;
 export type ProfileInput = z.infer<typeof profileSchema>;
 export type FeedbackInput = z.infer<typeof feedbackSchema>;
 export type ReportInput = z.infer<typeof reportSchema>;
+
+// ---------------------------------------------------------------------------
+// Admin: locations
+// ---------------------------------------------------------------------------
+
+export const locationCreateSchema = z.object({
+  parentId: z.coerce.number().int().positive(),
+  level: z.enum(["district", "city_corporation", "upazila", "thana", "ward", "union", "area", "village"]),
+  nameEn: z.string().trim().min(2).max(80),
+  nameBn: z.string().trim().min(1).max(80),
+});
+
+export const locationUpdateSchema = z.object({
+  id: z.coerce.number().int().positive(),
+  nameEn: z.string().trim().min(2).max(80).optional(),
+  nameBn: z.string().trim().min(1).max(80).optional(),
+  isActive: z
+    .union([z.boolean(), z.enum(["true", "false"]).transform((v) => v === "true")])
+    .optional(),
+});

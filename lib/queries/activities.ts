@@ -13,7 +13,7 @@ import {
   venues,
 } from "@/lib/db/schema";
 
-export const ACTIVITIES_PAGE_SIZE = 9;
+export const ACTIVITIES_PAGE_SIZE = 12;
 
 export interface ActivityFilters {
   category?: string;

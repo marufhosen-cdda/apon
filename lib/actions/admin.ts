@@ -31,7 +31,9 @@ export const adminUserUpdate = createAction({
   authorize: "admin",
   revalidate: ["/admin/users", "/admin"],
   handler: async (input, { user }: ActionContext) => {
-    if (input.userId === user.id && input.action === "suspend") {
+    // Admins cannot suspend or demote themselves (prevents locking the
+    // last admin out of the Admin Panel).
+    if (input.userId === user.id && input.action !== "restore") {
       throw new ActionError("errors.validation");
     }
 

@@ -1,83 +1,51 @@
-import { getTranslations } from "next-intl/server";
-import {
-  ArrowLeft,
-  Gauge,
-  LayoutGrid,
-  ListChecks,
-  MapPinned,
-  ShieldAlert,
-  Users,
-  VenetianMask,
-} from "lucide-react";
-
-import { Link } from "@/i18n/navigation";
 import { requireAdmin } from "@/lib/session";
+import { getAdminQueueCounts } from "@/lib/queries/admin";
 import { LocaleSwitcher } from "@/components/features/nav/locale-switcher";
 import { ThemeToggle } from "@/components/features/nav/theme-toggle";
+import { UserMenu } from "@/components/features/nav/user-menu";
+import {
+  AdminMobileNav,
+  AdminSectionTitle,
+  AdminSidebar,
+} from "@/components/features/admin/admin-shell";
 
 /**
- * Admin shell.
+ * Admin Panel shell — deliberately a different layout from the member app:
+ * dark fixed sidebar with grouped navigation and live queue badges, a slim
+ * top bar, and a wide content area for tables.
  *
- * `proxy.ts` also guards `/admin`, but the authoritative check is here: a
- * non-admin (or suspended) session never renders this tree.
+ * `proxy.ts` already returns 403 for non-admins; `requireAdmin()` here is the
+ * authoritative check (it calls `forbidden()`), so this tree never renders
+ * for anyone else.
  */
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  await requireAdmin();
-  const t = await getTranslations();
-
-  const links = [
-    { href: "/admin", label: t("admin.overview.title"), icon: LayoutGrid },
-    { href: "/admin/users", label: t("admin.users.title"), icon: Users },
-    { href: "/admin/reports", label: t("admin.reports.title"), icon: ShieldAlert },
-    { href: "/admin/host-applications", label: t("admin.hosts.title"), icon: ListChecks },
-    { href: "/admin/activities", label: t("admin.activities.title"), icon: ListChecks },
-    { href: "/admin/venues", label: t("admin.venues.title"), icon: MapPinned },
-    { href: "/admin/circles", label: t("admin.circles.title"), icon: VenetianMask },
-    { href: "/admin/metrics", label: t("admin.metrics.title"), icon: Gauge },
-  ];
+  const user = await requireAdmin();
+  const badges = await getAdminQueueCounts();
 
   return (
     <div className="min-h-dvh bg-background">
-      <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/home"
-              className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="size-4" aria-hidden />
-              {t("common.appName")}
-            </Link>
-            <span className="text-sm font-semibold">{t("admin.overview.title")}</span>
+      <AdminSidebar badges={badges} />
+
+      <div className="lg:pl-60">
+        <header className="sticky top-0 z-30 border-b border-border bg-card/90 backdrop-blur">
+          <div className="flex h-14 items-center gap-3 px-4 sm:px-6">
+            <AdminMobileNav badges={badges} />
+            <AdminSectionTitle />
+            <div className="ml-auto flex items-center gap-1">
+              <ThemeToggle />
+              <LocaleSwitcher />
+              <UserMenu
+                panel="admin"
+                user={{ id: user.id, name: user.name, avatarUrl: user.avatarUrl, role: user.role }}
+              />
+            </div>
           </div>
+        </header>
 
-          <div className="flex items-center gap-1.5">
-            <ThemeToggle />
-            <LocaleSwitcher />
-          </div>
-        </div>
-
-        <nav aria-label={t("admin.overview.title")} className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <ul className="flex gap-1 overflow-x-auto pb-2">
-            {links.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                >
-                  <link.icon className="size-4" aria-hidden />
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </header>
-
-      <main id="main" className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
-        {children}
-      </main>
+        <main id="main" className="mx-auto w-full max-w-[1400px] px-4 py-5 sm:px-6">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
-

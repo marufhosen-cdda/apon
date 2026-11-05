@@ -58,7 +58,7 @@ export function VerifyForm({ method, identifier, next, phone }: Props) {
 
       toast.success(method === "phone" ? t("phoneVerified") : t("newHere"));
       const target =
-        next && next.startsWith("/") && !next.startsWith("//") ? next : "/home";
+        next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
       window.location.href = target;
     });
   }

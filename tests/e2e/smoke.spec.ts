@@ -122,5 +122,14 @@ test.describe("member journey", () => {
       await expect(page.getByText(address)).toBeVisible();
       await expect(page.getByText("Address visible after you RSVP")).toBeHidden();
     }
+
+    // ------------------------------------------------ role-based access
+    // Members get a 403 for the Admin Panel and host tools, not a silent redirect.
+    const adminResponse = await page.goto("/en/admin");
+    expect(adminResponse?.status()).toBe(403);
+    await expect(page.getByRole("heading", { name: /don't have access/ })).toBeVisible();
+
+    const hostResponse = await page.goto("/en/host/new");
+    expect(hostResponse?.status()).toBe(403);
   });
 });

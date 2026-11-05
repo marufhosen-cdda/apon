@@ -81,7 +81,7 @@ export function ActivityFilters({
       </div>
 
       <div className="space-y-3 p-3.5">
-        <div className="grid gap-2.5 sm:grid-cols-3">
+        <div className="grid gap-2.5 sm:grid-cols-3 lg:grid-cols-1">
           <label className="space-y-1">
             <span className="text-muted-foreground text-[11px] font-medium tracking-wide uppercase">
               {t("category")}
@@ -144,6 +144,7 @@ export function ActivityFilters({
             key={resetKey}
             initialTrail={resetKey === 0 ? areaTrail : []}
             allowDivision
+            layout="sidebar"
             onChange={(_id, trail) =>
               setFilters({ area: trail.at(-1)?.slug ?? "", page: 1 })
             }

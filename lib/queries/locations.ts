@@ -211,3 +211,45 @@ export async function assertSelectableLocation(id: number) {
   }
   return row;
 }
+
+export type AdminLocationRow = {
+  id: number;
+  slug: string;
+  level: LocationLevel;
+  nameEn: string;
+  nameBn: string;
+  isActive: boolean;
+  zoneLabelEn: string;
+  childCount: number;
+  members: number;
+  venues: number;
+};
+
+/** Children of `parentId` with subtree member/venue counts (admin browser). */
+export async function getAdminLocationRows(parentId: number | null): Promise<AdminLocationRow[]> {
+  const parentFilter = parentId === null ? sql`c.parent_id is null` : sql`c.parent_id = ${parentId}`;
+  const rows = await db.execute<AdminLocationRow>(sql`
+    select
+      c.id, c.slug, c.level, c.name_en as "nameEn", c.name_bn as "nameBn",
+      c.is_active as "isActive", c.zone_label_en as "zoneLabelEn",
+      (select count(*)::int from areas k where k.parent_id = c.id) as "childCount",
+      (select count(*)::int from users u
+         join areas d on d.id = u.area_id
+        where u.deleted_at is null and (d.id = c.id or c.id = any(d.ancestor_ids))) as "members",
+      (select count(*)::int from venues v
+         join areas d on d.id = v.area_id
+        where v.deleted_at is null and (d.id = c.id or c.id = any(d.ancestor_ids))) as "venues"
+    from areas c
+    where ${parentFilter}
+    order by
+      array_position(array['division','district','city_corporation','upazila','thana','ward','union','area','village']::text[], c.level),
+      case when c.level = 'ward' then coalesce(nullif(regexp_replace(c.name_en, '\\D', '', 'g'), '')::int, 0) else 0 end,
+      c.name_en
+  `);
+  return [...rows];
+}
+
+export const getLocationById = cache(async (id: number) => {
+  const rows = await db.select().from(areas).where(eq(areas.id, id)).limit(1);
+  return rows[0] ?? null;
+});

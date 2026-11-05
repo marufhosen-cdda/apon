@@ -60,20 +60,26 @@
     "userMenu": "Account menu",
     "credits": "Credits",
     "guidelines": "Community guidelines",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "adminPanel": "Admin panel",
+    "memberApp": "Member app",
+    "hostDashboard": "Host dashboard",
+    "switchPanel": "Switch panel",
+    "signedInAs": "Signed in as",
+    "dashboard": "Dashboard"
   },
   "landing": {
     "hero": {
-      "badge": "Dhaka · small weekly circles",
-      "title": "Find your people in Dhaka",
+      "badge": "Across Bangladesh · small weekly circles",
+      "title": "Find your people, wherever you live",
       "highlight": "your people",
       "subtitle": "Bondhu Circle matches you into a small circle of 4–6 people who share your interests and free time — then gives you a reason to meet up every week.",
       "ctaPrimary": "Join your circle",
       "ctaSecondary": "See how it works",
-      "imageAlt": "Friends laughing together over coffee at a Dhaka café",
+      "imageAlt": "Friends laughing together over coffee at a local café",
       "stat1": "4–6 people per circle",
       "stat2": "One meetup a week",
-      "stat3": "4 zones across Dhaka"
+      "stat3": "64 districts · 12 city corporations"
     },
     "how": {
       "title": "How it works",
@@ -104,11 +110,11 @@
     "faq": {
       "title": "Questions, answered",
       "q1": "What exactly is a circle?",
-      "a1": "A circle is 4–6 people in your part of Dhaka with overlapping interests and availability. You keep the same circle for weeks, so friendships have time to become real.",
+      "a1": "A circle is 4–6 people near you — in your neighbourhood, thana or upazila — with overlapping interests and availability. You keep the same circle for weeks, so friendships have time to become real.",
       "q2": "Is it free?",
       "a2": "Joining Bondhu Circle is free. Some activities have a small cost (coffee, court rental) paid directly at the venue.",
-      "q3": "Do I have to be from Dhaka?",
-      "a3": "For now, yes. We only operate in four Dhaka zones: Dhanmondi/Mohammadpur, Gulshan/Banani, Mirpur and Uttara.",
+      "q3": "Which places do you cover?",
+      "a3": "All of Bangladesh: every division, district, upazila and union, plus all 12 city corporations down to thanas, wards and neighbourhoods like Gulshan, Dhanmondi, Agrabad or Zindabazar.",
       "q4": "What if my circle is not a fit?",
       "a4": "You can leave a circle at any time and request a new one. Nobody is stuck with anyone.",
       "q5": "Is there a women-only option?",
@@ -278,10 +284,21 @@
     "suggestedEmpty": "No activities match your zone and interests right now.",
     "feedbackPrompt": "How was your last meetup?",
     "feedbackPromptText": "Three private questions — it takes a minute.",
-    "feedbackCta": "Give feedback"
+    "feedbackCta": "Give feedback",
+    "statUpcoming": "Upcoming RSVPs",
+    "statCircle": "Circle members",
+    "statSuggested": "Picked for you",
+    "statZone": "Matching zone",
+    "yourArea": "Your area",
+    "changeArea": "Change",
+    "noArea": "Add where you live to get matched nearby.",
+    "browse": "Browse activities",
+    "hostNew": "Host an activity",
+    "quickLinks": "Quick links",
+    "pastRecent": "Recently attended"
   },
   "activities": {
-    "title": "Activities in Dhaka",
+    "title": "Activities near you",
     "subtitle": "Small, friendly, hosted. Find your next reason to meet up.",
     "filters": {
       "category": "Category",
@@ -581,7 +598,20 @@
       "activeCircles": "Active circles",
       "pendingApprovals": "Pending approvals",
       "recentSignups": "Recent signups",
-      "recentActivity": "Recent activity"
+      "recentActivity": "Recent activity",
+      "subtitle": "Community health at a glance — what needs attention first.",
+      "queues": "Needs attention",
+      "queueReports": "Open safety reports",
+      "queueHosts": "Host applications",
+      "queueActivities": "Activities awaiting review",
+      "queueRequests": "Circle requests",
+      "allClear": "All clear",
+      "review": "Review",
+      "byDivision": "Members by division",
+      "roles": "Roles",
+      "viewAll": "View all",
+      "area": "Area",
+      "user": "Member"
     },
     "users": {
       "title": "Users",
@@ -685,6 +715,50 @@
       "noData": "Not enough data yet.",
       "attendance": "Attendance",
       "ofTotal": "{value} of {total}"
+    },
+    "nav": {
+      "overview": "Overview",
+      "community": "Community",
+      "content": "Content & places",
+      "insights": "Insights",
+      "users": "Users",
+      "reports": "Reports",
+      "hosts": "Host applications",
+      "activities": "Activities",
+      "venues": "Venues",
+      "locations": "Locations",
+      "circles": "Circles",
+      "metrics": "Metrics",
+      "consoleLabel": "Admin console",
+      "viewSite": "View member app"
+    },
+    "locations": {
+      "title": "Locations",
+      "subtitle": "Every division, district, city corporation, thana, ward, upazila, union and neighbourhood members can pick.",
+      "coverage": "Coverage",
+      "allBangladesh": "Bangladesh",
+      "name": "Name",
+      "nameBn": "Name (Bangla)",
+      "level": "Level",
+      "inside": "Inside",
+      "members": "Members",
+      "venues": "Venues",
+      "zone": "Matching zone",
+      "status": "Status",
+      "active": "Active",
+      "hidden": "Hidden",
+      "hide": "Hide",
+      "show": "Show",
+      "rename": "Rename",
+      "add": "Add location",
+      "addUnder": "Add a place under {name}",
+      "addHint": "Use this for villages and neighbourhoods missing from the official dataset. New places inherit the parent's matching zone.",
+      "saved": "Location saved.",
+      "empty": "No places inside this one yet.",
+      "searchPlaceholder": "Find a place…",
+      "results": "Search results",
+      "open": "Open",
+      "noChildrenAllowed": "Places at this level have no sub-locations."
     }
   },
   "errors": {
@@ -720,5 +794,19 @@
       "area": "Area",
       "village": "Village"
     }
+  },
+  "roles": {
+    "member": "Member",
+    "host": "Host",
+    "admin": "Admin"
+  },
+  "access": {
+    "title": "You don't have access to this page",
+    "text": "This section is for {roles} only. If you think this is a mistake, contact a Bondhu Circle admin.",
+    "adminOnly": "administrators",
+    "hostOnly": "hosts",
+    "generic": "authorized members",
+    "goHome": "Go to my home",
+    "signInOther": "Sign in with another account"
   }
 }

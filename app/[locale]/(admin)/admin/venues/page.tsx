@@ -25,9 +25,9 @@ export default async function AdminVenuesPage() {
   const trails = await getLocationTrails(rows.map((r) => r.venue.areaId));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+        <h1 className="text-lg font-semibold tracking-tight">{t("title")}</h1>
         <VenueForm />
       </div>
 

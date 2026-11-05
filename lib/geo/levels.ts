@@ -82,10 +82,12 @@ export function localizedName(
 
 /** "Gulshan 2, Gulshan, Dhaka North City Corporation" — most specific first. */
 export function formatTrail(trail: LocationCrumb[], locale: string, max = 3): string {
-  return trail
-    .filter((c) => c.level !== "division")
-    .reverse()
-    .slice(0, max)
-    .map((c) => localizedName(c, locale))
-    .join(", ");
+  const names: string[] = [];
+  for (const crumb of [...trail].reverse()) {
+    if (crumb.level === "division") continue;
+    const name = localizedName(crumb, locale);
+    // "Banani" area inside "Banani" thana reads once.
+    if (names.at(-1) !== name) names.push(name);
+  }
+  return names.slice(0, max).join(", ");
 }

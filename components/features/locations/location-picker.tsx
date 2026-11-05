@@ -57,7 +57,7 @@ export interface LocationPickerProps {
   /** Hide the search box (e.g. in tight filter bars). */
   hideSearch?: boolean;
   /** Lay the selects out in a responsive grid instead of a stack. */
-  layout?: "stack" | "grid";
+  layout?: "stack" | "grid" | "sidebar";
   className?: string;
 }
 

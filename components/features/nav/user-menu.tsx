@@ -2,12 +2,22 @@
 
 import { useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, LogOut, Settings, Shield, User as UserIcon } from "lucide-react";
+import {
+  ChevronDown,
+  LayoutDashboard,
+  LogOut,
+  Mic2,
+  Settings,
+  Shield,
+  User as UserIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { useRouter } from "@/i18n/navigation";
 import { authClient } from "@/lib/auth-client";
+import { can, toRole } from "@/lib/rbac";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,13 +34,16 @@ interface Props {
     avatarUrl: string | null;
     role: string;
   };
+  /** Which panel this menu sits in — controls the "switch panel" entry. */
+  panel?: "member" | "admin";
 }
 
-/** Avatar menu: profile, settings, admin (role-gated) and sign out. */
-export function UserMenu({ user }: Props) {
+/** Avatar menu: identity + role, panel switch (role-gated), profile, settings, sign out. */
+export function UserMenu({ user, panel = "member" }: Props) {
   const t = useTranslations();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const role = toRole(user.role);
 
   function signOut() {
     startTransition(async () => {
@@ -41,12 +54,13 @@ export function UserMenu({ user }: Props) {
     });
   }
 
-  const initials = user.name
-    .split(" ")
-    .map((part) => part.charAt(0))
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+  const initials =
+    user.name
+      .split(" ")
+      .map((part) => part.charAt(0))
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() || "B";
 
   return (
     <DropdownMenu>
@@ -57,28 +71,49 @@ export function UserMenu({ user }: Props) {
           aria-label={t("nav.userMenu")}
           className="flex items-center gap-1 rounded-full outline-none ring-ring transition-shadow focus-visible:ring-2"
         >
-          <Avatar className="size-9 border border-border">
+          <Avatar className="size-8 border border-border">
             {user.avatarUrl ? <AvatarImage src={user.avatarUrl} alt="" /> : null}
-            <AvatarFallback>{initials}</AvatarFallback>
+            <AvatarFallback className="text-xs">{initials}</AvatarFallback>
           </Avatar>
           <ChevronDown className="size-3.5 text-muted-foreground" aria-hidden />
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="truncate">{user.name}</DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="w-60">
+        <DropdownMenuLabel className="flex items-center justify-between gap-2 font-normal">
+          <span className="min-w-0">
+            <span className="block text-[11px] text-muted-foreground">{t("nav.signedInAs")}</span>
+            <span className="block truncate text-sm font-semibold">{user.name || "—"}</span>
+          </span>
+          <Badge variant={role === "admin" ? "info" : role === "host" ? "success" : "secondary"}>
+            {t(`roles.${role}`)}
+          </Badge>
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
+
+        {can(role, "admin.access") ? (
+          panel === "admin" ? (
+            <DropdownMenuItem onSelect={() => router.push("/home")}>
+              <LayoutDashboard className="size-4" aria-hidden /> {t("nav.memberApp")}
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem onSelect={() => router.push("/admin")}>
+              <Shield className="size-4" aria-hidden /> {t("nav.adminPanel")}
+            </DropdownMenuItem>
+          )
+        ) : null}
+        {panel === "member" && can(role, "activities.host") ? (
+          <DropdownMenuItem onSelect={() => router.push("/host")}>
+            <Mic2 className="size-4" aria-hidden /> {t("nav.hostDashboard")}
+          </DropdownMenuItem>
+        ) : null}
+
         <DropdownMenuItem onSelect={() => router.push(`/profile/${user.id}`)}>
           <UserIcon className="size-4" aria-hidden /> {t("nav.profile")}
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => router.push("/settings")}>
           <Settings className="size-4" aria-hidden /> {t("nav.settings")}
         </DropdownMenuItem>
-        {user.role === "admin" ? (
-          <DropdownMenuItem onSelect={() => router.push("/admin")}>
-            <Shield className="size-4" aria-hidden /> {t("nav.admin")}
-          </DropdownMenuItem>
-        ) : null}
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={signOut} disabled={pending}>
           <LogOut className="size-4" aria-hidden /> {t("common.signOut")}

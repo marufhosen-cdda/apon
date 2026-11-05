@@ -5,14 +5,15 @@
 
 /* ---------------------------------------------------------------------------
    Bondhu Circle design tokens
-   Warm neutral palette, one soft-teal accent, 14px radius, borders over shadows.
+   Cool neutral canvas, white surfaces, one teal accent, 10px radius.
+   Compact by default: dense controls (36px), soft shadows on surfaces.
 --------------------------------------------------------------------------- */
 
 :root {
-  --radius: 0.875rem;
+  --radius: 0.625rem;
 
-  --background: #fbfdfc;
-  --foreground: #10201d;
+  --background: #f5f7f7;
+  --foreground: #0f1f1c;
 
   --card: #ffffff;
   --card-foreground: #10201d;
@@ -26,8 +27,8 @@
   --secondary: #eef4f2;
   --secondary-foreground: #14322d;
 
-  --muted: #f1f5f4;
-  --muted-foreground: #5b6b67;
+  --muted: #eff3f2;
+  --muted-foreground: #5a6a66;
 
   --accent: #e2f2ee;
   --accent-foreground: #0c4f49;
@@ -35,12 +36,23 @@
   --destructive: #b42318;
   --destructive-foreground: #ffffff;
 
-  --border: #e2e9e7;
-  --input: #d5dedb;
+  --border: #e1e7e5;
+  --input: #d3dcd9;
   --ring: #0f766e;
 
   --success: #157f5f;
   --warning: #b45309;
+  --info: #0369a1;
+
+  /* Admin panel chrome (dark in both themes so the two panels never look alike). */
+  --sidebar: #0d1b19;
+  --sidebar-foreground: #c9d6d3;
+  --sidebar-muted: #7d918d;
+  --sidebar-accent: #16302c;
+  --sidebar-border: #1c2f2c;
+  --sidebar-primary: #2dd4bf;
+
+  --shadow-color: 180 20% 20%;
 
   --chart-1: #0f766e;
   --chart-2: #0891b2;
@@ -50,10 +62,10 @@
 }
 
 .dark {
-  --background: #0b1413;
+  --background: #0a1312;
   --foreground: #e7eeec;
 
-  --card: #101c1a;
+  --card: #0f1b19;
   --card-foreground: #e7eeec;
 
   --popover: #101c1a;
@@ -80,6 +92,16 @@
 
   --success: #34d399;
   --warning: #fbbf24;
+  --info: #38bdf8;
+
+  --sidebar: #070e0d;
+  --sidebar-foreground: #c9d6d3;
+  --sidebar-muted: #6f837f;
+  --sidebar-accent: #12302b;
+  --sidebar-border: #15231f;
+  --sidebar-primary: #2dd4bf;
+
+  --shadow-color: 0 0% 0%;
 
   --chart-1: #2dd4bf;
   --chart-2: #38bdf8;
@@ -116,6 +138,16 @@
   --color-ring: var(--ring);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-primary: var(--sidebar-primary);
+
+  --shadow-xs: 0 1px 2px 0 hsl(var(--shadow-color) / 0.05);
+  --shadow-sm: 0 1px 3px 0 hsl(var(--shadow-color) / 0.07), 0 1px 2px -1px hsl(var(--shadow-color) / 0.06);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -136,6 +168,8 @@
   body {
     background-color: var(--background);
     color: var(--foreground);
+    font-size: 0.875rem;
+    line-height: 1.5;
     font-feature-settings: "cv02", "cv03", "cv04";
     text-rendering: optimizeLegibility;
   }
@@ -175,6 +209,14 @@
 
   .card-hover:hover {
     transform: translateY(-2px);
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
   }
 
   .text-balance {

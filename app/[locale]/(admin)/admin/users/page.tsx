@@ -24,9 +24,9 @@ export default async function AdminUsersPage({
   const [t, rows] = await Promise.all([getTranslations("admin.users"), listAdminUsers(q)]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+        <h1 className="text-lg font-semibold tracking-tight">{t("title")}</h1>
 
         {/* Plain GET form: search works without JavaScript. */}
         <form className="relative w-full max-w-xs">
@@ -47,7 +47,7 @@ export default async function AdminUsersPage({
       {rows.length === 0 ? (
         <EmptyState title={t("empty")} />
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-border">
+        <div>
           <Table>
             <TableHeader>
               <TableRow>

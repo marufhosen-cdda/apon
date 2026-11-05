@@ -6,38 +6,29 @@ import { routing, isLocale } from "@/i18n/routing";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
+import { decideAccess, ruleFor, toRole } from "@/lib/rbac";
 
 /**
  * Next.js 16 `proxy` (formerly middleware).
  *
  * Responsibilities, in order:
  *   1. Forward `/api/auth/*` to Better Auth — the project ships no API routes.
- *   2. Guard the (app) and (admin) route groups.
+ *   2. Apply the role-based route policy from `lib/rbac.ts`:
+ *      sign-in redirects, onboarding gate, User Panel vs Admin Panel (403).
  *   3. Hand off to next-intl for locale detection/prefixing.
  *
- * Route groups are invisible in the URL, so protection is keyed on the first
- * path segment after the locale (e.g. `/en/admin/reports` → `admin`).
+ * Route groups are invisible in the URL, so the policy is keyed on the path
+ * segments after the locale (e.g. `/en/admin/reports` → `admin`). Layouts and
+ * Server Actions re-check authorization; this is the first, cheapest line.
  */
 
 const handleI18n = createI18nMiddleware(routing);
 
-const PROTECTED = new Set([
-  "home",
-  "circles",
-  "activities",
-  "host",
-  "profile",
-  "settings",
-  "onboarding",
-  "admin",
-]);
-
-/** Pages reachable without onboarding (plus admin, seeded as onboarded). */
-const PRE_ONBOARDING = new Set(["onboarding", "settings", "profile"]);
-
-async function clearSessionCookies(response: NextResponse) {
+function clearSessionCookies(response: NextResponse) {
   response.cookies.delete("better-auth.session_token");
   response.cookies.delete("better-auth.session_data");
+  response.cookies.delete("__Secure-better-auth.session_token");
+  response.cookies.delete("__Secure-better-auth.session_data");
 }
 
 export async function proxy(request: NextRequest): Promise<NextResponse> {
@@ -53,59 +44,45 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
   const firstSegment = segments[0] ?? "";
   const locale = isLocale(firstSegment) ? firstSegment : routing.defaultLocale;
   const rest = isLocale(firstSegment) ? segments.slice(1) : segments;
-  const head = rest[0] ?? "";
 
-  if (!PROTECTED.has(head)) {
-    return handleI18n(request);
-  }
+  // Public pages never need a session lookup.
+  if (ruleFor(rest).section === "public") return handleI18n(request);
 
-  const redirect = (to: string, init?: ResponseInit) => {
+  const redirectTo = (to: string) => {
     const url = request.nextUrl.clone();
-    url.pathname = to;
-    url.search = "";
-    return NextResponse.redirect(url, init);
+    const [path, query = ""] = to.split("?");
+    url.pathname = `/${locale}${path}`;
+    url.search = query ? `?${query}` : "";
+    return NextResponse.redirect(url);
   };
 
-  // 3. Session check.
+  // 3. Session + user row (role, status, onboarding).
   const session = await auth.api.getSession({ headers: request.headers });
-  if (!session?.user) {
-    const target =
-      rest.length > 0
-        ? `/${locale}/sign-in?next=${encodeURIComponent(pathname + search)}`
-        : `/${locale}/sign-in`;
-    return redirect(target);
-  }
+  const user = session?.user
+    ? (await db.select().from(users).where(eq(users.id, session.user.id)).limit(1))[0]
+    : undefined;
 
-  const rows = await db.select().from(users).where(eq(users.id, session.user.id)).limit(1);
-  const user = rows[0];
-
-  if (!user || user.deletedAt) {
-    const url = request.nextUrl.clone();
-    url.pathname = `/${locale}/sign-in`;
-    url.search = "";
-    const response = NextResponse.redirect(url);
-    await clearSessionCookies(response);
+  // Deleted or suspended accounts are signed out immediately.
+  if (session?.user && (!user || user.deletedAt || user.status === "suspended")) {
+    const response = redirectTo(user?.status === "suspended" ? "/sign-in?error=suspended" : "/sign-in");
+    clearSessionCookies(response);
     return response;
   }
 
-  // 4. Suspended users are signed out immediately.
-  if (user.status === "suspended") {
+  const decision = decideAccess(
+    rest,
+    user ? { role: toRole(user.role), onboarded: Boolean(user.onboardedAt) } : null,
+    rest.length > 0 ? pathname + search : "",
+  );
+
+  if (decision.kind === "redirect") return redirectTo(decision.to);
+
+  if (decision.kind === "forbidden") {
+    // Render the localized 403 page in place, with a real 403 status.
     const url = request.nextUrl.clone();
-    url.pathname = `/${locale}/sign-in`;
-    url.search = "?error=suspended";
-    const response = NextResponse.redirect(url);
-    await clearSessionCookies(response);
-    return response;
-  }
-
-  // 5. Admin area requires the admin role (pages re-check server-side too).
-  if (head === "admin" && user.role !== "admin") {
-    return redirect(`/${locale}/home`);
-  }
-
-  // 6. Everyone else must finish onboarding first.
-  if (!user.onboardedAt && user.role !== "admin" && !PRE_ONBOARDING.has(head)) {
-    return redirect(`/${locale}/onboarding`);
+    url.pathname = `/${locale}/access-denied`;
+    url.search = `?from=${encodeURIComponent(rest[0] ?? "")}`;
+    return NextResponse.rewrite(url, { status: 403 });
   }
 
   return handleI18n(request);

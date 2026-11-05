@@ -31,7 +31,7 @@ export default async function SettingsPage() {
   ]);
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8">
+    <div className="mx-auto max-w-3xl space-y-5">
       <PageHeader title={t("title")} subtitle={t("notificationsHint")} />
 
       <FadeUp>
