@@ -69,7 +69,7 @@ export default async function AdminCirclesPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <Link
-                      href={`/circles/${circle.id}`}
+                      href={`/admin/circles/${circle.id}`}
                       className="text-sm text-primary underline-offset-4 hover:underline"
                     >
                       {t("formAction")}

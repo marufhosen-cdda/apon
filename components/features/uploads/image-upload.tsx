@@ -47,7 +47,7 @@ export function ImageUpload({
     <div
       className={cn(
         "relative grid shrink-0 place-items-center overflow-hidden border border-border bg-muted text-muted-foreground",
-        shape === "circle" ? "size-20 rounded-full" : "aspect-[16/9] w-full max-w-sm rounded-lg",
+        shape === "circle" ? "size-20 rounded-full" : "aspect-[16/10] w-full rounded-lg sm:w-48",
       )}
     >
       {value ? (
@@ -89,7 +89,7 @@ export function ImageUpload({
         }}
       >
         {preview}
-        <div className="min-w-0 space-y-2">
+        <div className="min-w-0 flex-1 space-y-2">
           <input
             ref={input}
             id={inputId}

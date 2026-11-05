@@ -175,3 +175,87 @@ export async function getActiveCircleMemberIds() {
     );
   return new Set(rows.map((r) => r.userId));
 }
+
+/**
+ * Admin view of one circle: details, every member (any status), upcoming
+ * meetups, the latest time poll and chat *activity* (counts only — members'
+ * private messages are not shown in the Admin Panel; reported messages reach
+ * admins through the Reports queue).
+ */
+export async function getAdminCircleDetail(circleId: number) {
+  const [circle] = await db.select().from(circles).where(eq(circles.id, circleId)).limit(1);
+  if (!circle) return null;
+
+  const [zoneRow] = await db
+    .select({ en: areas.zoneLabelEn, bn: areas.zoneLabelBn })
+    .from(areas)
+    .where(eq(areas.zone, circle.zone))
+    .limit(1);
+
+  const [members, upcoming, latestPoll, chat] = await Promise.all([
+    db
+      .select({
+        membership: circleMembers,
+        user: {
+          id: users.id,
+          name: users.name,
+          username: users.displayUsername,
+          avatarUrl: users.avatarUrl,
+          gender: users.gender,
+          birthYear: users.birthYear,
+          status: users.status,
+        },
+        areaName: areas.nameEn,
+        areaNameBn: areas.nameBn,
+      })
+      .from(circleMembers)
+      .innerJoin(users, eq(circleMembers.userId, users.id))
+      .leftJoin(areas, eq(users.areaId, areas.id))
+      .where(eq(circleMembers.circleId, circleId))
+      .orderBy(
+        sql`case ${circleMembers.status} when 'active' then 0 when 'invited' then 1 else 2 end`,
+        asc(users.name),
+      ),
+    db
+      .select({ activity: activities, venueName: venues.name })
+      .from(activities)
+      .leftJoin(venues, eq(activities.venueId, venues.id))
+      .where(and(eq(activities.circleId, circleId), sql`${activities.startsAt} > now()`))
+      .orderBy(asc(activities.startsAt))
+      .limit(5),
+    db.select().from(polls).where(eq(polls.circleId, circleId)).orderBy(desc(polls.createdAt)).limit(1),
+    db
+      .select({
+        total: sql<number>`count(*)::int`,
+        hidden: sql<number>`count(*) filter (where ${circleMessages.hiddenAt} is not null)::int`,
+        lastAt: sql<Date | null>`max(${circleMessages.createdAt})`,
+      })
+      .from(circleMessages)
+      .where(eq(circleMessages.circleId, circleId)),
+  ]);
+
+  const poll = latestPoll[0] ?? null;
+  const options = poll
+    ? await db
+        .select({
+          id: pollOptions.id,
+          label: pollOptions.label,
+          votes: sql<number>`(select count(*)::int from ${pollVotes} v where v.option_id = ${pollOptions.id})`,
+        })
+        .from(pollOptions)
+        .where(eq(pollOptions.pollId, poll.id))
+    : [];
+
+  return {
+    circle,
+    zoneLabel: zoneRow ?? null,
+    members,
+    upcoming,
+    poll: poll ? { poll, options } : null,
+    chat: {
+      total: chat[0]?.total ?? 0,
+      hidden: chat[0]?.hidden ?? 0,
+      lastAt: chat[0]?.lastAt ? new Date(chat[0].lastAt) : null,
+    },
+  };
+}
