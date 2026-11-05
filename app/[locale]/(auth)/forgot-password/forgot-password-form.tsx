@@ -34,7 +34,7 @@ export function ForgotPasswordForm() {
         setError(te(authErrorKey(result.error)));
         return;
       }
-      toast.success(t("resetSentIfExists"));
+      toast.success(t("resetSentIfExists", { email: parsed.data }));
       router.push(`/reset-password?email=${encodeURIComponent(parsed.data)}`);
     });
   }
@@ -57,7 +57,7 @@ export function ForgotPasswordForm() {
       <FieldError id="forgot-error" message={error} />
       <Button type="submit" className="w-full" disabled={pending}>
         {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Send aria-hidden />}
-        {t("sendResetCode")}
+        {pending ? t("sendingResetCode") : t("sendResetCode")}
       </Button>
     </form>
   );

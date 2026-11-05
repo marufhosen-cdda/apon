@@ -76,11 +76,11 @@ export function AuthCard({
   footer?: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-7">
-      <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
-      {subtitle ? <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p> : null}
-      <div className="mt-5">{children}</div>
-      {footer ? <div className="mt-5 border-t border-border pt-4 text-sm text-muted-foreground">{footer}</div> : null}
+    <div>
+      <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+      {subtitle ? <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{subtitle}</p> : null}
+      <div className="mt-6">{children}</div>
+      {footer ? <div className="mt-6 border-t border-border pt-5 text-sm text-muted-foreground">{footer}</div> : null}
     </div>
   );
 }

@@ -15,11 +15,19 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
   return (
     <AuthCard
       title={t("resetTitle")}
-      subtitle={email ? t("resetSubtitle", { email }) : t("forgotSubtitle")}
+      subtitle={email ? t("resetSubtitle", { email }) : t("resetSubtitleNoEmail")}
       footer={
-        <Link href="/forgot-password" className="font-medium text-primary hover:underline">
-          {t("resend")}
-        </Link>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p>
+            {t("noResetCode")}{" "}
+            <Link href="/forgot-password" className="font-medium text-primary hover:underline">
+              {t("requestNewCode")}
+            </Link>
+          </p>
+          <Link href="/sign-in" className="hover:text-foreground">
+            {t("backToSignIn")}
+          </Link>
+        </div>
       }
     >
       <ResetPasswordForm email={email} />

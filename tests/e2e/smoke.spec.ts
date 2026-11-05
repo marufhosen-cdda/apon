@@ -126,7 +126,7 @@ test.describe("password authentication", () => {
 
     await page.goto("/en/forgot-password");
     await page.getByLabel("Email address").fill(email);
-    await page.getByRole("button", { name: "Send reset code" }).click();
+    await page.getByRole("button", { name: "Email me a reset code" }).click();
     await expect(page).toHaveURL(/\/reset-password\?email=/);
 
     await expect
@@ -134,11 +134,11 @@ test.describe("password authentication", () => {
       .toMatch(/^\d{6}$/);
     const code = await readOtp(`forget-password-otp-${email}`);
 
-    await page.getByLabel("6-digit code").fill(code);
-    await page.getByLabel("Password", { exact: true }).fill(newPassword);
-    await page.getByLabel("Confirm password").fill(newPassword);
-    await page.getByRole("button", { name: "Reset password" }).click();
-    await expect(page.getByText("Password updated. Sign in with your new password.")).toBeVisible();
+    await page.getByLabel("Reset code").fill(code);
+    await page.getByLabel("New password", { exact: true }).fill(newPassword);
+    await page.getByLabel("Confirm new password").fill(newPassword);
+    await page.getByRole("button", { name: "Save new password" }).click();
+    await expect(page.getByText("Your password has been updated. Sign in with your new password.")).toBeVisible();
 
     // …is revoked by the reset, and the old password no longer works.
     expect(await (await other.request.get("/api/auth/get-session")).json()).toBeNull();

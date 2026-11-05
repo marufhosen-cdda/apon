@@ -54,16 +54,16 @@ export function ResetPasswordForm({ email: initialEmail }: { email: string }) {
         </div>
       ) : null}
       <div className="space-y-1.5">
-        <Label htmlFor="otp">{t("codeLabel")}</Label>
+        <Label htmlFor="otp">{t("resetCodeLabel")}</Label>
         <CodeInput id="otp" value={otp} onChange={(e) => setOtp(e.target.value)} autoFocus={Boolean(initialEmail)} />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="password">{t("newPasswordLabel")}</Label>
+        <Label htmlFor="password">{t("security.newPassword")}</Label>
         <PasswordInput id="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
         <PasswordChecklist password={password} personal={[email]} />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="confirmPassword">{t("confirmPasswordLabel")}</Label>
+        <Label htmlFor="confirmPassword">{t("security.confirmPassword")}</Label>
         <PasswordInput
           id="confirmPassword"
           autoComplete="new-password"
@@ -74,7 +74,7 @@ export function ResetPasswordForm({ email: initialEmail }: { email: string }) {
       <FieldError id="reset-error" message={error} />
       <Button type="submit" className="w-full" disabled={pending}>
         {pending ? <Loader2 className="animate-spin" aria-hidden /> : <KeyRound aria-hidden />}
-        {t("resetButton")}
+        {pending ? t("resettingPassword") : t("resetButton")}
       </Button>
     </form>
   );
