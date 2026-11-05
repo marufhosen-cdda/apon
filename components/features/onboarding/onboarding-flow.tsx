@@ -28,6 +28,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { INTEREST_ICONS } from "@/lib/interest-icons";
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import type { LocationCrumb } from "@/lib/geo/levels";
 import { LocationPicker } from "@/components/features/locations/location-picker";
 import { ImageUpload } from "@/components/features/uploads/image-upload";
@@ -41,17 +42,10 @@ const STEPS: Step[] = ["interests", "area", "availability", "preferences"];
 
 const WEEKDAY_ORDER = [0, 1, 2, 3, 4, 5, 6] as const;
 
+/** Server Action errors → the user's language (see `useErrorMessage`). */
 function useErrorText() {
-  const tOnboarding = useTranslations("onboarding");
-  const tErrors = useTranslations("errors");
-  const tLocations = useTranslations("locations");
-  return (key?: string) => {
-    if (!key) return tErrors("generic");
-    if (key === "locations.pickMoreSpecific") return tLocations("pickMoreSpecific");
-    if (key.startsWith("onboarding.")) return tOnboarding(key.slice("onboarding.".length));
-    if (key.startsWith("errors.")) return tErrors(key.slice("errors.".length));
-    return tErrors("generic");
-  };
+  const errorMessage = useErrorMessage();
+  return (key?: string) => errorMessage(key);
 }
 
 export interface OnboardingFlowProps {

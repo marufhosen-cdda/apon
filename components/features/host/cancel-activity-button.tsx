@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, XCircle } from "lucide-react";
@@ -21,7 +22,7 @@ import {
 /** Cancelling notifies everyone who signed up. */
 export function CancelActivityButton({ activityId }: { activityId: number }) {
   const t = useTranslations("host.dashboard");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const tc = useTranslations("common");
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -31,7 +32,7 @@ export function CancelActivityButton({ activityId }: { activityId: number }) {
     startTransition(async () => {
       const result = await cancelActivity(undefined, { id: activityId });
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       toast.success(t("cancelled"));

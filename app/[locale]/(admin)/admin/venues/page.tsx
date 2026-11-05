@@ -52,7 +52,7 @@ export default async function AdminVenuesPage() {
                   ) : (
                     <Badge variant="warning">{t("unapprove")}</Badge>
                   )}
-                  {!venue.isPublic ? <Badge variant="secondary">private</Badge> : null}
+                  {!venue.isPublic ? <Badge variant="secondary">{t("private")}</Badge> : null}
                 </div>
 
                 <p className="flex items-start gap-1.5 text-sm text-muted-foreground">

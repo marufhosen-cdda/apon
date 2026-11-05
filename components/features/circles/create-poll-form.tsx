@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { CalendarClock, Loader2, Plus } from "lucide-react";
@@ -23,6 +24,7 @@ import { Label } from "@/components/ui/label";
 /** Propose another meetup-time poll (2–6 options). */
 export function CreatePollForm({ circleId }: { circleId: number }) {
   const t = useTranslations("circles");
+  const errorMessage = useErrorMessage();
   const tc = useTranslations("common");
   const te = useTranslations("errors");
   const router = useRouter();
@@ -50,7 +52,7 @@ export function CreatePollForm({ circleId }: { circleId: number }) {
         options: cleaned.map((label) => ({ label })),
       });
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       toast.success(tc("saved"));

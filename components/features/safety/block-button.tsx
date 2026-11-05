@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Ban, Loader2, Undo2 } from "lucide-react";
@@ -32,8 +33,8 @@ export function BlockButton({
   isBlocked: boolean;
 }) {
   const t = useTranslations("safety.block");
+  const errorMessage = useErrorMessage();
   const ts = useTranslations("safety");
-  const te = useTranslations("errors");
   const tc = useTranslations("common");
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -46,7 +47,7 @@ export function BlockButton({
         : await blockAction(undefined, { userId });
 
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
 

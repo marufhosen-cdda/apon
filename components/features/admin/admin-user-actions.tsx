@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, MoreHorizontal, ShieldCheck, UserCog, UserX } from "lucide-react";
@@ -32,7 +33,7 @@ export function AdminUserActions({
   isSelf: boolean;
 }) {
   const t = useTranslations("admin.users");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -40,7 +41,7 @@ export function AdminUserActions({
     startTransition(async () => {
       const result = await adminUserUpdate(undefined, { userId, action });
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("unauthorized") : result.error);
+        toast.error(errorMessage(result.error, "errors.unauthorized"));
         return;
       }
       toast.success(t("updated"));

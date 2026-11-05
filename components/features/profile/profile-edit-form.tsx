@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, Save } from "lucide-react";
@@ -35,8 +36,7 @@ export function ProfileEditForm({
   initial: ProfileFormValues;
 }) {
   const t = useTranslations("profile");
-  const te = useTranslations("errors");
-  const tl = useTranslations("locations");
+  const errorMessage = useErrorMessage();
   const router = useRouter();
   const [values, setValues] = useState<ProfileFormValues>(initial);
   const [pending, startTransition] = useTransition();
@@ -49,13 +49,7 @@ export function ProfileEditForm({
     startTransition(async () => {
       const result = await updateProfile(undefined, values);
       if (!result.ok) {
-        toast.error(
-          result.error === "locations.pickMoreSpecific"
-            ? tl("pickMoreSpecific")
-            : result.error.startsWith("errors.")
-              ? te("validation")
-              : result.error,
-        );
+        toast.error(errorMessage(result.error, "errors.validation"));
         return;
       }
       toast.success(t("saved"));

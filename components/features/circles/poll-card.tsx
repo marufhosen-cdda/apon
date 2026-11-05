@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Check, Loader2, Vote } from "lucide-react";
@@ -31,7 +32,7 @@ interface Props {
  */
 export function PollCard({ poll, options, totalVotes, myVoteCount }: Props) {
   const t = useTranslations("circles");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const router = useRouter();
   const [selected, setSelected] = useState<number[]>(
     options.filter((o) => o.votedByMe).map((o) => o.id),
@@ -52,7 +53,7 @@ export function PollCard({ poll, options, totalVotes, myVoteCount }: Props) {
     startTransition(async () => {
       const result = await votePoll(undefined, { pollId: poll.id, optionIds: selected });
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       toast.success(t("voted"));

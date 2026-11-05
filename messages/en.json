@@ -533,7 +533,9 @@
       "map": "Open in maps",
       "backToList": "Back to activities",
       "organiserNote": "Message the host",
-      "capacity": "{going} going · capacity {capacity}"
+      "capacity": "{going} going · capacity {capacity}",
+      "somethingWrong": "Something wrong? Let our team know.",
+      "reportHost": "Report host"
     },
     "rsvp": {
       "success": "You are in — see you there!",
@@ -850,7 +852,8 @@
       "complete": "Mark completed",
       "updated": "Activity updated.",
       "empty": "No activities in this state.",
-      "filterStatus": "Status"
+      "filterStatus": "Status",
+      "womenOnly": "Women only"
     },
     "venues": {
       "title": "Venues",
@@ -875,7 +878,8 @@
         "other": "Other"
       },
       "photo": "Photo",
-      "formHint": "Venues are where hosts run activities. Only approved, public venues can be booked."
+      "formHint": "Venues are where hosts run activities. Only approved, public venues can be booked.",
+      "private": "Private"
     },
     "circles": {
       "title": "Circles",
@@ -924,7 +928,8 @@
         "invited": "Invited",
         "left": "Left",
         "declined": "Declined"
-      }
+      },
+      "suspended": "Suspended"
     },
     "metrics": {
       "title": "Metrics",

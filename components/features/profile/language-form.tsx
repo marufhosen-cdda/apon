@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Loader2, Languages } from "lucide-react";
@@ -19,7 +20,7 @@ const LABELS: Record<Locale, string> = { en: "English", bn: "বাংলা" };
  */
 export function LanguageForm() {
   const t = useTranslations("settings");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const locale = useLocale() as Locale;
   const router = useRouter();
   const pathname = usePathname();
@@ -31,7 +32,7 @@ export function LanguageForm() {
     startTransition(async () => {
       const result = await updateLanguage(undefined, { locale: next });
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       toast.success(t("saved"));

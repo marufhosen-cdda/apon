@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Loader2, Send } from "lucide-react";
@@ -38,7 +39,7 @@ export function MessageThread({
   messages: ThreadMessage[];
 }) {
   const t = useTranslations("circles");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const ts = useTranslations("safety");
   const locale = useLocale();
   const router = useRouter();
@@ -51,7 +52,7 @@ export function MessageThread({
     startTransition(async () => {
       const result = await postCircleMessage(undefined, { circleId, body: trimmed });
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       setBody("");

@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Check, Loader2, X } from "lucide-react";
@@ -12,7 +13,7 @@ import { Button } from "@/components/ui/button";
 /** Approving promotes the member to `host` and notifies them. */
 export function HostApplicationActions({ applicationId }: { applicationId: number }) {
   const t = useTranslations("admin.hosts");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -20,7 +21,7 @@ export function HostApplicationActions({ applicationId }: { applicationId: numbe
     startTransition(async () => {
       const result = await reviewHostApplication(undefined, { applicationId, status });
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       toast.success(t("updated"));

@@ -2,6 +2,11 @@ import { expect, test, type Page } from "@playwright/test";
 
 import { closeDb, sql } from "./helpers/db";
 
+// Sign-in is rate limited per IP; every test starts from a clean window.
+test.beforeEach(async () => {
+  await sql`delete from rate_limits`;
+});
+
 test.afterAll(async () => {
   await closeDb();
 });

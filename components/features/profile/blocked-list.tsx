@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { CircleSlash, Loader2, Undo2 } from "lucide-react";
@@ -18,8 +19,8 @@ export interface BlockedUser {
 
 export function BlockedList({ users }: { users: BlockedUser[] }) {
   const t = useTranslations("settings");
+  const errorMessage = useErrorMessage();
   const ts = useTranslations("safety.block");
-  const te = useTranslations("errors");
   const router = useRouter();
   const [rows, setRows] = useState(users);
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -31,7 +32,7 @@ export function BlockedList({ users }: { users: BlockedUser[] }) {
       const result = await unblockAction(undefined, { userId: user.id });
       setPendingId(null);
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       setRows((current) => current.filter((r) => r.id !== user.id));

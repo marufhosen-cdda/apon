@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, Save } from "lucide-react";
@@ -33,7 +34,7 @@ const FIELDS: (keyof NotificationPrefs)[] = [
  */
 export function NotificationPrefsForm({ initial }: { initial: NotificationPrefs }) {
   const t = useTranslations("settings");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const router = useRouter();
   const [prefs, setPrefs] = useState<NotificationPrefs>(initial);
   const [pending, startTransition] = useTransition();
@@ -46,7 +47,7 @@ export function NotificationPrefsForm({ initial }: { initial: NotificationPrefs 
 
       const result = await updateNotificationPrefs(undefined, payload);
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       toast.success(t("saved"));

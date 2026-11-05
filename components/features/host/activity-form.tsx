@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Loader2, Save, Send } from "lucide-react";
@@ -44,8 +45,8 @@ export function ActivityForm({
   initial?: ActivityFormValues;
 }) {
   const t = useTranslations("host.form");
+  const errorMessage = useErrorMessage();
   const th = useTranslations("host");
-  const te = useTranslations("errors");
   const locale = useLocale();
   const router = useRouter();
   const editing = Boolean(initial?.id);
@@ -93,7 +94,7 @@ export function ActivityForm({
         : await createActivity(undefined, payload);
 
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("validation") : result.error);
+        toast.error(errorMessage(result.error, "errors.validation"));
         return;
       }
 

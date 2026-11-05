@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Flag, Loader2 } from "lucide-react";
@@ -42,22 +43,18 @@ export function ReportButton({
   const t = useTranslations("safety.report");
   const tc = useTranslations("common");
   const tu = useTranslations("uploads");
+  const errorMessage = useErrorMessage();
   const [open, setOpen] = useState(false);
+  const targetLabel = t(
+    targetType === "user" ? "targetUser" : targetType === "activity" ? "targetActivity" : "targetMessage",
+  );
   const [, formAction, pending] = useActionState(async (_prev: unknown, formData: FormData) => {
     const result = await reportAction(undefined, formData);
     if (result.ok) {
       toast.success(t("submitted"));
       setOpen(false);
     } else {
-      toast.error(
-        result.error === "safety.report.already"
-          ? t("already")
-          : result.error.startsWith("uploads.errors.")
-            ? tu(result.error.replace("uploads.", "") as "errors.notYours")
-            : result.error === "errors.rateLimited"
-              ? tu("errors.rateLimited")
-              : tu("errors.generic"),
-      );
+      toast.error(errorMessage(result.error));
     }
     return result;
   }, { ok: false as const, error: "" });
@@ -65,14 +62,14 @@ export function ReportButton({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={variant} size={size} aria-label={label ?? t("title", { target: targetType })}>
-          <Flag aria-hidden /> {label ?? t("submit")}
+        <Button variant={variant} size={size}>
+          <Flag aria-hidden /> {label ?? t("title", { target: targetLabel })}
         </Button>
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t("title", { target: t(`target${targetType === "user" ? "User" : targetType === "activity" ? "Activity" : "Message"}` as const) })}</DialogTitle>
+          <DialogTitle>{t("title", { target: targetLabel })}</DialogTitle>
           <DialogDescription>{t("subtitle")}</DialogDescription>
         </DialogHeader>
 

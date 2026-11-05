@@ -53,7 +53,7 @@ export default async function AdminCirclesPage() {
                     {circle.name}
                     {circle.womenOnly ? (
                       <Badge variant="outline" className="ml-2">
-                        women only
+                        {t("womenOnly")}
                       </Badge>
                     ) : null}
                   </TableCell>

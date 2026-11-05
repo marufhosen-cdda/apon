@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
@@ -20,7 +21,7 @@ export function ActivityReviewActions({
   status: string;
 }) {
   const t = useTranslations("admin.activities");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -28,7 +29,7 @@ export function ActivityReviewActions({
     startTransition(async () => {
       const result = await reviewActivity(undefined, { activityId, action });
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       toast.success(t("updated"));

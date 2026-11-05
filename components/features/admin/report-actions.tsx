@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Check, Loader2, X } from "lucide-react";
@@ -13,7 +14,7 @@ import { Input } from "@/components/ui/input";
 /** Resolve a report as actioned or dismissed, with an internal note. */
 export function ReportActions({ reportId }: { reportId: number }) {
   const t = useTranslations("admin.reports");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const router = useRouter();
   const [note, setNote] = useState("");
   const [pending, startTransition] = useTransition();
@@ -22,7 +23,7 @@ export function ReportActions({ reportId }: { reportId: number }) {
     startTransition(async () => {
       const result = await resolveReport(undefined, { reportId, status, note });
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       toast.success(t("resolved"));

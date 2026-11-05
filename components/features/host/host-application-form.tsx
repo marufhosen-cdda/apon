@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, Send } from "lucide-react";
@@ -14,22 +15,16 @@ import { FileUpload } from "@/components/features/uploads/file-upload";
 /** Applications are reviewed by a human admin. */
 export function HostApplicationForm() {
   const t = useTranslations("host.apply");
+  const errorMessage = useErrorMessage();
   const tc = useTranslations("common");
   const tu = useTranslations("uploads");
-  const te = useTranslations("errors");
 
   const [state, formAction, pending] = useActionState(
     async (_prev: unknown, formData: FormData) => {
       const result = await applyToHost(undefined, formData);
       if (result.ok) toast.success(t("pending"));
       else
-        toast.error(
-          result.error.startsWith("host.")
-            ? t("alreadyApproved")
-            : result.error.startsWith("uploads.errors.")
-              ? tu(result.error.replace("uploads.", "") as "errors.notYours")
-              : te("generic"),
-        );
+        toast.error(errorMessage(result.error));
       return result;
     },
     { ok: false as const, error: "" },

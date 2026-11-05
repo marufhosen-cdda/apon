@@ -28,6 +28,11 @@ test.beforeAll(async () => {
   await sql`delete from reports where reporter_id in ('seed_user_40', 'seed_user_04')`;
   await sql`update users set avatar_url = null where id = 'seed_user_03'`;
 });
+// Sign-in is rate limited per IP; every test starts from a clean window.
+test.beforeEach(async () => {
+  await sql`delete from rate_limits`;
+});
+
 test.afterAll(async () => {
   await cloud.close();
   await closeDb();
