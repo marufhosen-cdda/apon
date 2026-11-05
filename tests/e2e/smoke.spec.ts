@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { activityAddress, closeDb, findBookableActivityId, readOtp } from "./helpers/db";
+import { activityAddress, closeDb, findBookableActivityId, readOtp, sql } from "./helpers/db";
 
 test.afterAll(async () => {
   await closeDb();
@@ -41,28 +41,184 @@ test.describe("public site", () => {
   });
 });
 
+const PASSWORD = "Circle2026safe";
+
+test.describe("password authentication", () => {
+  test("sign-up requires email verification, then email or username + password sign-in", async ({ page }) => {
+    const stamp = Date.now();
+    const email = `auth.${stamp}@apon.test`;
+    const username = `auth_${stamp}`;
+
+    // ---------------------------------------------------------------- sign up
+    await page.goto("/en/sign-up");
+    await page.getByLabel("Email address").fill(email);
+    await page.getByLabel("Username").fill(username);
+    await page.getByLabel("Password", { exact: true }).fill("short1");
+    await page.getByLabel("Confirm password").fill("short1");
+    await page.getByRole("button", { name: "Create account" }).click();
+    // Client-side validation blocks weak passwords before any request.
+    await expect(page.getByText("Password doesn't meet the requirements")).toBeVisible();
+
+    await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
+    await page.getByLabel("Confirm password").fill(PASSWORD);
+    await page.getByRole("button", { name: "Create account" }).click();
+    await expect(page).toHaveURL(/\/verify\?email=/);
+
+    // ---------------------------------------- unverified accounts can't sign in
+    const unverified = await page.context().browser()!.newPage();
+    await unverified.goto("/en/sign-in");
+    await unverified.getByLabel("Email or username").fill(username);
+    await unverified.getByLabel("Password", { exact: true }).fill(PASSWORD);
+    await unverified.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(unverified).toHaveURL(/\/verify/);
+    await unverified.close();
+
+    // ------------------------------------------------------- verify by code
+    await expect
+      .poll(() => readOtp(`email-verification-otp-${email}`).catch(() => ""), { message: "verification code stored" })
+      .toMatch(/^\d{6}$/);
+    const code = await readOtp(`email-verification-otp-${email}`);
+    await page.getByLabel("6-digit code").fill(code === "000000" ? "111111" : "000000");
+    await page.getByRole("button", { name: "Verify email" }).click();
+    await expect(page.getByText("That code is incorrect or has expired.")).toBeVisible();
+
+    await page.getByLabel("6-digit code").fill(code);
+    await page.getByRole("button", { name: "Verify email" }).click();
+    // Verification signs the user in and lands on onboarding.
+    await expect(page).toHaveURL(/\/onboarding/, { timeout: 30_000 });
+
+    // ----------------------------------------------------- sign out, sign in
+    await page.context().clearCookies();
+    await page.goto("/en/sign-in");
+    await page.getByLabel("Email or username").fill(username);
+    await page.getByLabel("Password", { exact: true }).fill("WrongPass999");
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page.getByText("Incorrect email/username or password.")).toBeVisible();
+
+    await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page).toHaveURL(/\/onboarding/, { timeout: 30_000 });
+
+    await page.context().clearCookies();
+    await page.goto("/en/sign-in");
+    await page.getByLabel("Email or username").fill(email.toUpperCase());
+    await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page).toHaveURL(/\/onboarding/, { timeout: 30_000 });
+
+    // Signed-in users are kept away from the auth pages.
+    await page.goto("/en/sign-up");
+    await expect(page).not.toHaveURL(/sign-up/);
+  });
+
+  test("forgot password resets with an emailed code and signs out old sessions", async ({ page, browser }) => {
+    const email = "nusrat@apon.app";
+    const newPassword = `Reset${Date.now()}x`;
+
+    // An existing session on another device…
+    const other = await browser.newContext({ baseURL: "http://localhost:3000" });
+    const signedIn = await other.request.post("/api/auth/sign-in/username", {
+      data: { username: "nusrat.jahan", password: "Apon2026demo" },
+      headers: { origin: "http://localhost:3000" },
+    });
+    expect(signedIn.ok()).toBe(true);
+    expect(await (await other.request.get("/api/auth/get-session")).json()).not.toBeNull();
+
+    await page.goto("/en/forgot-password");
+    await page.getByLabel("Email address").fill(email);
+    await page.getByRole("button", { name: "Email me a reset code" }).click();
+    await expect(page).toHaveURL(/\/reset-password\?email=/);
+
+    await expect
+      .poll(() => readOtp(`forget-password-otp-${email}`).catch(() => ""), { message: "reset code stored" })
+      .toMatch(/^\d{6}$/);
+    const code = await readOtp(`forget-password-otp-${email}`);
+
+    await page.getByLabel("Reset code").fill(code);
+    await page.getByLabel("New password", { exact: true }).fill(newPassword);
+    await page.getByLabel("Confirm new password").fill(newPassword);
+    await page.getByRole("button", { name: "Save new password" }).click();
+    await expect(page.getByText("Your password has been updated. Sign in with your new password.")).toBeVisible();
+
+    // …is revoked by the reset, and the old password no longer works.
+    expect(await (await other.request.get("/api/auth/get-session")).json()).toBeNull();
+    const oldPassword = await other.request.post("/api/auth/sign-in/username", {
+      data: { username: "nusrat.jahan", password: "Apon2026demo" },
+      headers: { origin: "http://localhost:3000" },
+    });
+    expect(oldPassword.status()).toBe(401);
+    await other.close();
+
+    await page.getByLabel("Email or username").fill("nusrat.jahan");
+    await page.getByLabel("Password", { exact: true }).fill(newPassword);
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page).toHaveURL(/\/home/, { timeout: 30_000 });
+
+    // Restore the seeded password so the suite stays repeatable.
+    await sql`update accounts set password = (select password from accounts where user_id = 'seed_admin_01')
+              where user_id = 'seed_host_01' and provider_id = 'credential'`;
+  });
+
+  test("signed-in users can change their password in Settings", async ({ page }) => {
+    const newPassword = `Changed${Date.now()}x`;
+    await page.goto("/en/sign-in");
+    await page.getByLabel("Email or username").fill("sadia@apon.app");
+    await page.getByLabel("Password", { exact: true }).fill("Apon2026demo");
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page).toHaveURL(/\/home/, { timeout: 30_000 });
+
+    await page.goto("/en/settings#security");
+    await page.getByLabel("Current password").fill("NotMyPassword1");
+    await page.getByLabel("New password", { exact: true }).fill(newPassword);
+    await page.getByLabel("Confirm new password").fill(newPassword);
+    await page.getByRole("button", { name: "Update password" }).click();
+    await expect(page.getByText("Your current password is incorrect.")).toBeVisible();
+
+    await page.getByLabel("Current password").fill("Apon2026demo");
+    await page.getByRole("button", { name: "Update password" }).click();
+    await expect(page.getByText("Password updated.")).toBeVisible();
+
+    await page.context().clearCookies();
+    await page.goto("/en/sign-in");
+    await page.getByLabel("Email or username").fill("sadia.rahman");
+    await page.getByLabel("Password", { exact: true }).fill(newPassword);
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page).toHaveURL(/\/home/, { timeout: 30_000 });
+
+    await sql`update accounts set password = (select password from accounts where user_id = 'seed_admin_01')
+              where user_id = 'seed_host_03' and provider_id = 'credential'`;
+  });
+
+  test("the old passwordless code sign-in is gone", async ({ request }) => {
+    const disabled = await request.post("/api/auth/sign-in/email-otp", {
+      data: { email: "admin@apon.app", otp: "123456" },
+      headers: { origin: "http://localhost:3000" },
+    });
+    expect(disabled.status()).toBe(404);
+  });
+});
+
 test.describe("member journey", () => {
-  test("sign in → onboard → verify phone → RSVP reveals the venue", async ({ page }) => {
+  test("sign up → onboard → verify phone → RSVP reveals the venue", async ({ page }) => {
     const stamp = Date.now();
     const email = `e2e.${stamp}@apon.test`;
     // Valid Bangladeshi mobile format, unique per run.
     const phone = `018${String(stamp).slice(-8)}`;
 
-    // ---------------------------------------------------------------- sign in
-    await page.goto("/en/sign-in");
+    // --------------------------------------------------- sign up + verify
+    await page.goto("/en/sign-up");
     await page.getByLabel("Email address").fill(email);
-    await page.getByRole("button", { name: "Send code" }).click();
-
+    await page.getByLabel("Username").fill(`member_${stamp}`);
+    await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
+    await page.getByLabel("Confirm password").fill(PASSWORD);
+    await page.getByRole("button", { name: "Create account" }).click();
     await expect(page).toHaveURL(/\/verify/);
 
-    // The code lands in the verifications table (Better Auth stores it in clear).
     await expect
-      .poll(() => readOtp(email).catch(() => ""), { message: "email OTP should be stored" })
+      .poll(() => readOtp(`email-verification-otp-${email}`).catch(() => ""), { message: "verification code stored" })
       .toMatch(/^\d{6}$/);
-    const emailCode = await readOtp(email);
-
-    await page.getByLabel("6-digit code").fill(emailCode);
-    await page.getByRole("button", { name: "Verify and continue" }).click();
+    await page.getByLabel("6-digit code").fill(await readOtp(`email-verification-otp-${email}`));
+    await page.getByRole("button", { name: "Verify email" }).click();
 
     // ------------------------------------------------------------- onboarding
     await expect(page).toHaveURL(/\/onboarding/, { timeout: 30_000 });

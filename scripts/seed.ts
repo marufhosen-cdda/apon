@@ -7,6 +7,24 @@ import { eq } from "drizzle-orm";
 import { env } from "@/lib/env";
 import * as schema from "@/lib/db/schema";
 import { syncLocations } from "@/lib/geo/sync";
+import { hashPassword } from "better-auth/crypto";
+
+/** Demo password for every seeded account (documented in the README). */
+export const SEED_PASSWORD = "Apon2026demo";
+
+/** `Sumaiya Rahman` + id → `sumaiya.rahman` (unique, valid for the username plugin). */
+function usernameFor(name: string, used: Set<string>): string {
+  const base = name
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^a-z0-9]+/g, ".")
+    .replace(/^\.+|\.+$/g, "")
+    .slice(0, 24);
+  let candidate = base;
+  for (let n = 2; used.has(candidate); n++) candidate = `${base}${n}`;
+  used.add(candidate);
+  return candidate;
+}
 
 /**
  * Seed script — `npm run db:seed`.
@@ -223,12 +241,17 @@ async function main() {
   const people = [admin, ...hostProfiles, ...members];
   const now = new Date();
 
+  const usedUsernames = new Set<string>();
+  const usernames = new Map(people.map((p) => [p.id, usernameFor(p.name, usedUsernames)]));
+
   await db.insert(schema.users).values(
     people.map((p) => ({
       id: p.id,
       name: p.name,
       email: p.email,
       emailVerified: true,
+      username: usernames.get(p.id)!,
+      displayUsername: usernames.get(p.id)!,
       phoneNumber: p.phone,
       phoneNumberVerified: true,
       gender: p.gender,
@@ -244,6 +267,18 @@ async function main() {
       onboardedAt: now,
       guidelinesAcceptedAt: now,
       createdAt: daysFromNow(-60 + (people.indexOf(p) % 40), 10),
+    })),
+  );
+
+  // Credential accounts: Better Auth's scrypt hash (fresh salt per account).
+  const hashes = await Promise.all(people.map(() => hashPassword(SEED_PASSWORD)));
+  await db.insert(schema.accounts).values(
+    people.map((p, i) => ({
+      id: `seed_acct_${p.id}`,
+      userId: p.id,
+      providerId: "credential",
+      accountId: p.id,
+      password: hashes[i],
     })),
   );
 
@@ -525,8 +560,8 @@ async function main() {
   };
 
   console.log("Seed complete:", counts);
-  console.log("\nSign in with any seeded email, e.g. admin@apon.app");
-  console.log("The 6-digit code is printed in the terminal running `npm run dev`.\n");
+  console.log(`\nSign in with any seeded email or username, e.g. admin@apon.app / ${usernames.get(admin.id)}`);
+  console.log(`Password for every seeded account: ${SEED_PASSWORD}`);
 }
 
 main()

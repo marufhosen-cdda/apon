@@ -4,7 +4,7 @@
  * proxy, layouts, navigation and unit tests all share one policy.
  *
  *   public  — landing, guidelines, credits            (anyone)
- *   auth    — sign-in, verify                         (signed-out only)
+ *   auth    — sign-in, sign-up, verify, password reset (signed-out only)
  *   member  — the User Panel: home, circles, …        (any signed-in role)
  *   host    — create/manage activities                (host, admin)
  *   admin   — the Admin Panel                         (admin)
@@ -43,7 +43,10 @@ export function ruleFor(segments: string[]): RouteRule {
   const [head = "", second] = segments;
   switch (head) {
     case "sign-in":
+    case "sign-up":
     case "verify":
+    case "forgot-password":
+    case "reset-password":
       return AUTH;
     case "admin":
       return { section: "admin", roles: ADMINS, onboarding: false };

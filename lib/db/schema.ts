@@ -46,6 +46,10 @@ export const users = pgTable(
     createdAt: createdAt(),
     updatedAt: updatedAt(),
 
+    // Added by the `username` plugin: stored lower-case (unique), shown as typed.
+    username: text("username").unique(),
+    displayUsername: text("display_username"),
+
     // Added by the `phoneNumber` plugin.
     phoneNumber: text("phone_number"),
     phoneNumberVerified: boolean("phone_number_verified").notNull().default(false),

@@ -36,7 +36,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <LocaleSwitcher />
               <UserMenu
                 panel="admin"
-                user={{ id: user.id, name: user.name, avatarUrl: user.avatarUrl, role: user.role }}
+                user={{ id: user.id, name: user.name, avatarUrl: user.avatarUrl, role: user.role, username: user.displayUsername ?? user.username }}
               />
             </div>
           </div>

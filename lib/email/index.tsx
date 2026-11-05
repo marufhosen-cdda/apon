@@ -14,8 +14,9 @@ import {
 /**
  * Email delivery.
  *
- * Without RESEND_API_KEY every message is printed to the server console, so the
- * whole app (including OTP sign-in) works in development with zero setup.
+ * Uses Resend when RESEND_API_KEY is set (with EMAIL_FROM as the sender).
+ * Without it — development only — messages are printed to the server console
+ * so sign-up verification works with zero setup.
  */
 
 let client: Resend | null = null;
@@ -33,7 +34,8 @@ export interface SendEmailInput {
 
 export async function sendEmail({ to, subject, react }: SendEmailInput): Promise<void> {
   if (!emailEnabled) {
-    console.log(`\n[email:dev] → ${to} | ${subject}\n`);
+    // Development fallback only — production refuses to send auth codes this way.
+    if (env.NODE_ENV !== "production") console.log(`\n[email:dev] → ${to} | ${subject}\n`);
     return;
   }
   try {
@@ -64,26 +66,81 @@ const appUrl = () => env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
 // Typed senders — one per notification the product sends
 // ---------------------------------------------------------------------------
 
-export function sendOtpEmail(input: { to: string; code: string; locale: string }) {
+export type AuthCodePurpose = "email-verification" | "forget-password";
+
+/**
+ * Account verification / password-reset code. Sent through the existing Resend
+ * integration (`RESEND_API_KEY`, `EMAIL_FROM`); never logged in production.
+ */
+export function sendAuthCodeEmail(input: {
+  to: string;
+  code: string;
+  locale: string;
+  purpose: AuthCodePurpose;
+}) {
+  if (!emailEnabled && env.NODE_ENV === "production") {
+    // Never fall back to logging a credential code in production.
+    throw new Error("RESEND_API_KEY must be set in production to send verification codes");
+  }
   const bn = input.locale === "bn";
+  const verify = input.purpose === "email-verification";
+  const copy = verify
+    ? {
+        subject: bn ? `APON ইমেইল যাচাই কোড: ${input.code}` : `Verify your APON email: ${input.code}`,
+        preview: bn ? "আপনার APON অ্যাকাউন্ট যাচাই করুন" : "Confirm your email to finish creating your APON account",
+        heading: bn ? "আপনার ইমেইল যাচাই করুন" : "Verify your email",
+        body: bn
+          ? "APON-এ স্বাগতম! অ্যাকাউন্ট তৈরি শেষ করতে নিচের কোডটি দিন। কোডটি ১০ মিনিট কার্যকর।"
+          : "Welcome to APON! Enter the code below to finish creating your account. It is valid for 10 minutes.",
+      }
+    : {
+        subject: bn ? `APON পাসওয়ার্ড রিসেট কোড: ${input.code}` : `Reset your APON password: ${input.code}`,
+        preview: bn ? "আপনার পাসওয়ার্ড রিসেট করুন" : "Use this code to choose a new password",
+        heading: bn ? "পাসওয়ার্ড রিসেট করুন" : "Reset your password",
+        body: bn
+          ? "নতুন পাসওয়ার্ড সেট করতে নিচের কোডটি দিন। কোডটি ১০ মিনিট কার্যকর। রিসেটের পর আপনার সব ডিভাইস থেকে সাইন আউট হয়ে যাবে।"
+          : "Enter the code below to choose a new password. It is valid for 10 minutes. Resetting signs you out on every device.",
+      };
+
   return sendEmail({
     to: input.to,
-    subject: bn ? `আপনার কোড: ${input.code}` : `Your sign-in code: ${input.code}`,
+    subject: copy.subject,
     react: (
-      <EmailLayout
-        preview={bn ? "আপনার APON সাইন-ইন কোড" : "Your APON sign-in code"}
-        heading={bn ? "সাইন-ইন করুন" : "Sign in to APON"}
-      >
-        <EmailParagraph>
-          {bn
-            ? "নিচের কোডটি ব্যবহার করে সাইন ইন করুন। কোডটি ১০ মিনিটের জন্য কার্যকর।"
-            : "Use the code below to sign in. It is valid for 10 minutes."}
-        </EmailParagraph>
+      <EmailLayout preview={copy.preview} heading={copy.heading}>
+        <EmailParagraph>{copy.body}</EmailParagraph>
         <OtpCode code={input.code} />
         <EmailParagraph>
           {bn
-            ? "এই কোডটি কাউকে শেয়ার করবেন না। আপনি এটা চাননি তাহলে কিছু করতে হবে না।"
-            : "Never share this code. If you didn't request it, you can ignore this email."}
+            ? "এই কোডটি কাউকে শেয়ার করবেন না — APON কখনো কোড চাইবে না। আপনি এটা না চাইলে ইমেইলটি উপেক্ষা করুন।"
+            : "Never share this code — APON will never ask you for it. If you didn't request it, you can ignore this email."}
+        </EmailParagraph>
+      </EmailLayout>
+    ),
+  });
+}
+
+/**
+ * Sent when someone tries to sign up with an email that already has an account.
+ * The sign-up form shows the same response either way, so emails can't be probed.
+ */
+export function sendAccountExistsEmail(input: { to: string; locale: string }) {
+  const bn = input.locale === "bn";
+  return sendEmail({
+    to: input.to,
+    subject: bn ? "আপনার ইতিমধ্যে একটি APON অ্যাকাউন্ট আছে" : "You already have an APON account",
+    react: (
+      <EmailLayout
+        preview={bn ? "সাইন ইন করুন বা পাসওয়ার্ড রিসেট করুন" : "Sign in or reset your password"}
+        heading={bn ? "আপনার অ্যাকাউন্ট আছে" : "You already have an account"}
+      >
+        <EmailParagraph>
+          {bn
+            ? "কেউ (সম্ভবত আপনি) এই ইমেইল দিয়ে নতুন অ্যাকাউন্ট খোলার চেষ্টা করেছেন। আপনার অ্যাকাউন্ট আগে থেকেই আছে — সাইন ইন করুন, অথবা পাসওয়ার্ড ভুলে গেলে রিসেট করুন।"
+            : "Someone (probably you) tried to create a new account with this email. You already have one — sign in, or reset your password if you've forgotten it."}
+        </EmailParagraph>
+        <EmailButton href={`${appUrl()}/${bn ? "bn" : "en"}/sign-in`} label={bn ? "সাইন ইন" : "Sign in"} />
+        <EmailParagraph>
+          {bn ? "আপনি না হলে এই ইমেইলটি উপেক্ষা করুন।" : "If this wasn't you, you can safely ignore this email."}
         </EmailParagraph>
       </EmailLayout>
     ),

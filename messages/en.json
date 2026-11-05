@@ -137,8 +137,8 @@
     }
   },
   "auth": {
-    "signInTitle": "Welcome to APON",
-    "signInSubtitle": "Sign in with a one-time code. No passwords, ever.",
+    "signInTitle": "Welcome back to APON",
+    "signInSubtitle": "Sign in with your email or username and password.",
     "emailTab": "Email",
     "phoneTab": "Phone",
     "emailLabel": "Email address",
@@ -155,9 +155,9 @@
     "resend": "Resend code",
     "resendIn": "Resend in {seconds}s",
     "noCode": "Did not get a code?",
-    "devHint": "Development mode: the code is printed in the server console and email delivery is simulated.",
+    "devHint": "Development mode: emails are printed in the server console instead of being sent.",
     "backToSignIn": "Back to sign in",
-    "terms": "By continuing you agree to our community guidelines.",
+    "terms": "By continuing, you agree to our",
     "errorInvalidEmail": "Enter a valid email address.",
     "errorInvalidPhone": "Enter a valid Bangladeshi mobile number, e.g. 017XXXXXXXX.",
     "errorInvalidCode": "That code is not correct or has expired.",
@@ -165,7 +165,96 @@
     "errorSuspended": "This account is suspended. Contact an admin if you think this is a mistake.",
     "newHere": "New here?",
     "phoneVerified": "Phone verified",
-    "phoneUnverified": "Phone not verified"
+    "phoneUnverified": "Phone not verified",
+    "identifierLabel": "Email or username",
+    "identifierPlaceholder": "you@example.com or your.username",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Your password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "forgotPassword": "Forgot password?",
+    "signInButton": "Sign in",
+    "signingIn": "Signing in…",
+    "noAccount": "New to APON?",
+    "createAccount": "Create an account",
+    "signUpTitle": "Create your APON account",
+    "signUpSubtitle": "Join a small circle near you. Everyone belongs.",
+    "nameLabel": "Your name",
+    "namePlaceholder": "How should people call you?",
+    "optional": "optional",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "e.g. sumaiya.r",
+    "usernameHint": "3–30 letters, numbers, dots or underscores. You can sign in with it.",
+    "usernameAvailable": "Username is available",
+    "usernameTaken": "That username is taken",
+    "newPasswordLabel": "Password",
+    "confirmPasswordLabel": "Confirm password",
+    "signUpButton": "Create account",
+    "signingUp": "Creating account…",
+    "haveAccount": "Already have an account?",
+    "signInLink": "Sign in",
+    "passwordRules": {
+      "length": "8–128 characters",
+      "letter": "At least one letter",
+      "number": "At least one number",
+      "notPersonal": "Doesn't contain your username or email"
+    },
+    "verifyTitle": "Verify your email",
+    "verifySubtitle": "We sent a 6-digit code to {email}. Enter it to activate your account.",
+    "verifySubtitleNoEmail": "Enter the email you signed up with and the 6-digit code we sent to it.",
+    "verifyButton": "Verify email",
+    "verified": "Email verified — welcome to APON!",
+    "codeSent": "A new code is on its way.",
+    "checkSpam": "Can't find it? Check your spam folder.",
+    "forgotTitle": "Forgot your password?",
+    "forgotSubtitle": "No problem. Enter the email linked to your APON account and we'll send you a 6-digit code to reset it.",
+    "sendResetCode": "Email me a reset code",
+    "resetTitle": "Set a new password",
+    "resetSubtitle": "Enter the 6-digit code we emailed to {email}, then choose a new password. For your security, you'll be signed out on every device.",
+    "resetButton": "Save new password",
+    "resetDone": "Your password has been updated. Sign in with your new password.",
+    "resetSentIfExists": "If an APON account uses {email}, a reset code is on its way. It expires in 10 minutes.",
+    "emailNotVerified": "Please verify your email first. We've sent you a new code.",
+    "errors": {
+      "emailInvalid": "Enter a valid email address.",
+      "usernameInvalid": "Use 3–30 letters, numbers, dots or underscores (not all numbers, no reserved names).",
+      "passwordWeak": "Password doesn't meet the requirements below.",
+      "passwordPersonal": "Password must not contain your username or email.",
+      "passwordMismatch": "Passwords don't match.",
+      "passwordSame": "Choose a password different from your current one.",
+      "identifierRequired": "Enter your email or username.",
+      "passwordRequired": "Enter your password.",
+      "codeInvalid": "Enter the 6-digit code.",
+      "invalidCredentials": "Incorrect email/username or password.",
+      "usernameTaken": "That username is taken. Try another.",
+      "otpInvalid": "That code is incorrect or has expired.",
+      "tooManyAttempts": "Too many attempts. Request a new code.",
+      "rateLimited": "Too many attempts. Please wait a minute and try again.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "security": {
+      "title": "Password & security",
+      "subtitle": "Change your password or sign out of your other devices.",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "revokeOthers": "Sign out of all other devices",
+      "change": "Update password",
+      "changed": "Password updated.",
+      "wrongCurrent": "Your current password is incorrect.",
+      "noPassword": "Your account doesn't have a password yet. Set one with a reset code sent to your email.",
+      "setPassword": "Set a password",
+      "signOutOthers": "Sign out other devices",
+      "signedOutOthers": "Signed out of all other devices.",
+      "username": "Username"
+    },
+    "sendingResetCode": "Sending code…",
+    "rememberedPassword": "Remembered it?",
+    "resetSubtitleNoEmail": "Enter your email, the 6-digit reset code we sent you, and a new password.",
+    "resetCodeLabel": "Reset code",
+    "resettingPassword": "Saving…",
+    "noResetCode": "Didn't get the code?",
+    "requestNewCode": "Request a new one"
   },
   "onboarding": {
     "title": "Set up your profile",
@@ -808,5 +897,46 @@
     "generic": "authorized members",
     "goHome": "Go to my home",
     "signInOther": "Sign in with another account"
+  },
+  "authPanel": {
+    "trust": "Verified members · Public venues · Women-only circles",
+    "photoBy": "Photo: {name} / Unsplash",
+    "signIn": {
+      "eyebrow": "Welcome back",
+      "title": "Your circle is waiting for you.",
+      "points": [
+        "See this week's meetups and RSVPs at a glance",
+        "Chat and vote on a time with your circle",
+        "Discover activities near you, anywhere in Bangladesh"
+      ]
+    },
+    "signUp": {
+      "eyebrow": "Everyone belongs",
+      "title": "Meet 4–6 people near you who get you.",
+      "points": [
+        "Matched by interests, free time and neighbourhood",
+        "Small weekly circles — no crowds, no pressure",
+        "Hosted meetups at cafés, parks and courts"
+      ]
+    },
+    "verify": {
+      "eyebrow": "One last step",
+      "title": "Confirming it's really you keeps APON safe.",
+      "points": [
+        "Every member verifies their email",
+        "Codes expire after 10 minutes and are single-use",
+        "We never show your email or phone to other members"
+      ]
+    },
+    "recovery": {
+      "eyebrow": "Account recovery",
+      "title": "Back in your circle in two minutes.",
+      "points": [
+        "We email a 6-digit code to your account address",
+        "Choose a new password — at least 8 characters with a letter and a number",
+        "For your security, every device is signed out after a reset"
+      ],
+      "note": "APON staff will never ask for your password or a code."
+    }
   }
 }

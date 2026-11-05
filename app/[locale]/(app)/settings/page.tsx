@@ -1,3 +1,6 @@
+import { ShieldCheck } from "lucide-react";
+import { SecurityCard } from "@/components/features/profile/security-card";
+import { hasCredentialPassword } from "@/lib/queries/users";
 import { getTranslations } from "next-intl/server";
 import { Bell, Languages, TriangleAlert, UserCog } from "lucide-react";
 
@@ -22,12 +25,14 @@ export async function generateMetadata() {
 export default async function SettingsPage() {
   const user = await requireOnboarded();
 
-  const [t, tp, areaTrail, prefs, blocked] = await Promise.all([
+  const [t, tp, ts, areaTrail, prefs, blocked, hasPassword] = await Promise.all([
     getTranslations("settings"),
     getTranslations("profile"),
+    getTranslations("auth.security"),
     getLocationTrail(user.areaId),
     getNotificationPrefs(user.id),
     getBlockedUsers(user.id),
+    hasCredentialPassword(user.id),
   ]);
 
   return (
@@ -77,6 +82,21 @@ export default async function SettingsPage() {
           </CardHeader>
           <CardContent>
             <LanguageForm />
+          </CardContent>
+        </Card>
+      </FadeUp>
+
+      <FadeUp>
+        <Card id="security">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <ShieldCheck className="size-4 text-primary" aria-hidden />
+              {ts("title")}
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">{ts("subtitle")}</p>
+          </CardHeader>
+          <CardContent>
+            <SecurityCard hasPassword={hasPassword} username={user.displayUsername ?? user.username} email={user.email} />
           </CardContent>
         </Card>
       </FadeUp>

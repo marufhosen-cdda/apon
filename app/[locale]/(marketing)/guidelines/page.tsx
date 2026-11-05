@@ -83,7 +83,7 @@ export default async function GuidelinesPage() {
 
       <FadeUp className="flex flex-wrap justify-center gap-3">
         <Button asChild size="lg">
-          <Link href="/sign-in">{tn("getStarted")}</Link>
+          <Link href="/sign-up">{tn("getStarted")}</Link>
         </Button>
         <Button asChild variant="outline" size="lg">
           <Link href="/">{tn("home")}</Link>

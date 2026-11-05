@@ -2,139 +2,107 @@
 
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { Loader2, Mail, Phone } from "lucide-react";
+import { Loader2, LogIn } from "lucide-react";
 import { toast } from "sonner";
 
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { authClient } from "@/lib/auth-client";
-import { toBdE164 } from "@/lib/validations";
+import { authErrorKey } from "@/lib/auth-errors";
+import { isEmailIdentifier, signInSchema } from "@/lib/validations/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FieldError, PasswordInput } from "@/components/features/auth/auth-fields";
 
-/**
- * Sign-in entry: send an email OTP or an SMS OTP, then hand off to /verify.
- * The codes themselves are entered on the verify screen.
- */
+/** Email-or-username + password sign-in. */
 export function SignInForm({ next }: { next?: string }) {
   const t = useTranslations("auth");
+  const te = useTranslations("auth.errors");
   const router = useRouter();
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; phone?: string }>({});
 
-  function sendEmailOtp() {
-    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-    if (!valid) {
-      setErrors({ email: t("errorInvalidEmail") });
+  function submit(event: React.FormEvent) {
+    event.preventDefault();
+    const parsed = signInSchema.safeParse({ identifier, password });
+    if (!parsed.success) {
+      setError(te(parsed.error.issues[0].message.replace("auth.errors.", "")));
       return;
     }
-    setErrors({});
-    startTransition(async () => {
-      const { error } = await authClient.emailOtp.sendVerificationOtp({
-        email: email.trim(),
-        type: "sign-in",
-      });
-      if (error) {
-        toast.error(error.message ?? t("errorInvalidEmail"));
-        return;
-      }
-      const qs = new URLSearchParams();
-      if (next) qs.set("next", next);
-      qs.set("method", "email");
-      qs.set("email", email.trim());
-      router.push(`/verify?${qs.toString()}`);
-    });
-  }
+    setError(null);
 
-  function sendPhoneOtp() {
-    const valid = /^(\+?880|0)1[3-9]\d{8}$/.test(phone.trim());
-    if (!valid) {
-      setErrors({ phone: t("errorInvalidPhone") });
-      return;
-    }
-    setErrors({});
     startTransition(async () => {
-      const { error } = await authClient.phoneNumber.sendOtp({ phoneNumber: toBdE164(phone) });
-      if (error) {
-        toast.error(error.message ?? t("errorInvalidPhone"));
+      const id = parsed.data.identifier;
+      const result = isEmailIdentifier(id)
+        ? await authClient.signIn.email({ email: id.toLowerCase(), password: parsed.data.password })
+        : await authClient.signIn.username({ username: id, password: parsed.data.password });
+
+      if (result.error) {
+        if (result.error.code === "EMAIL_NOT_VERIFIED") {
+          // Better Auth has just emailed a fresh code (sendOnSignIn).
+          toast.info(t("emailNotVerified"));
+          const query = new URLSearchParams();
+          if (isEmailIdentifier(id)) query.set("email", id.toLowerCase());
+          if (next) query.set("next", next);
+          router.push(`/verify?${query.toString()}`);
+          return;
+        }
+        setPassword("");
+        setError(te(authErrorKey(result.error)));
         return;
       }
-      const qs = new URLSearchParams();
-      if (next) qs.set("next", next);
-      qs.set("method", "phone");
-      qs.set("phone", phone.trim());
-      router.push(`/verify?${qs.toString()}`);
+
+      const target = next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+      // Full navigation so the proxy sees the new session cookie.
+      window.location.href = target;
     });
   }
 
   return (
-    <Tabs defaultValue="email">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="email">
-          <Mail className="size-4" aria-hidden /> {t("emailTab")}
-        </TabsTrigger>
-        <TabsTrigger value="phone">
-          <Phone className="size-4" aria-hidden /> {t("phoneTab")}
-        </TabsTrigger>
-      </TabsList>
+    <form onSubmit={submit} className="space-y-4" noValidate>
+      <div className="space-y-1.5">
+        <Label htmlFor="identifier">{t("identifierLabel")}</Label>
+        <Input
+          id="identifier"
+          name="username"
+          autoComplete="username"
+          autoCapitalize="none"
+          spellCheck={false}
+          placeholder={t("identifierPlaceholder")}
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? "signin-error" : undefined}
+        />
+      </div>
 
-      <TabsContent value="email" className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">{t("emailLabel")}</Label>
-          <Input
-            id="email"
-            type="email"
-            autoComplete="email"
-            placeholder={t("emailPlaceholder")}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            aria-invalid={Boolean(errors.email)}
-            aria-describedby={errors.email ? "email-error" : undefined}
-            onKeyDown={(e) => e.key === "Enter" && sendEmailOtp()}
-          />
-          {errors.email ? (
-            <p id="email-error" className="text-xs text-destructive">
-              {errors.email}
-            </p>
-          ) : null}
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">{t("passwordLabel")}</Label>
+          <Link href="/forgot-password" className="text-xs font-medium text-primary hover:underline">
+            {t("forgotPassword")}
+          </Link>
         </div>
-        <Button className="w-full" onClick={sendEmailOtp} disabled={pending}>
-          {pending ? <Loader2 className="animate-spin" aria-hidden /> : null}
-          {pending ? t("sending") : t("sendCode")}
-        </Button>
-      </TabsContent>
+        <PasswordInput
+          id="password"
+          name="password"
+          autoComplete="current-password"
+          placeholder={t("passwordPlaceholder")}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? "signin-error" : undefined}
+        />
+      </div>
 
-      <TabsContent value="phone" className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="phone">{t("phoneLabel")}</Label>
-          <Input
-            id="phone"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            placeholder={t("phonePlaceholder")}
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            aria-invalid={Boolean(errors.phone)}
-            aria-describedby={errors.phone ? "phone-error" : undefined}
-            onKeyDown={(e) => e.key === "Enter" && sendPhoneOtp()}
-          />
-          {errors.phone ? (
-            <p id="phone-error" className="text-xs text-destructive">
-              {errors.phone}
-            </p>
-          ) : null}
-        </div>
-        <Button className="w-full" onClick={sendPhoneOtp} disabled={pending}>
-          {pending ? <Loader2 className="animate-spin" aria-hidden /> : null}
-          {pending ? t("sending") : t("sendCode")}
-        </Button>
-      </TabsContent>
+      <FieldError id="signin-error" message={error} />
 
-      <p className="mt-5 text-center text-xs text-muted-foreground">{t("devHint")}</p>
-    </Tabs>
+      <Button type="submit" className="w-full" disabled={pending}>
+        {pending ? <Loader2 className="animate-spin" aria-hidden /> : <LogIn aria-hidden />}
+        {pending ? t("signingIn") : t("signInButton")}
+      </Button>
+    </form>
   );
 }

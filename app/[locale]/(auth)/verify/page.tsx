@@ -1,39 +1,38 @@
 import { getTranslations } from "next-intl/server";
 
+import { Link } from "@/i18n/navigation";
+import { emailEnabled, env } from "@/lib/env";
+import { AuthCard } from "@/components/features/auth/auth-fields";
 import { VerifyForm } from "./verify-form";
 
 export async function generateMetadata() {
   const t = await getTranslations("auth");
-  return { title: t("verify") };
+  return { title: t("verifyTitle") };
 }
 
 export default async function VerifyPage({
   searchParams,
 }: {
-  searchParams: Promise<{ method?: string; email?: string; phone?: string; next?: string }>;
+  searchParams: Promise<{ email?: string; next?: string }>;
 }) {
   const [t, params] = await Promise.all([getTranslations("auth"), searchParams]);
-  const method = params.method === "phone" ? "phone" : "email";
-  const identifier = method === "phone" ? (params.phone ?? "") : (params.email ?? "");
+  const email = params.email?.trim().toLowerCase() || undefined;
+  const devMode = !emailEnabled && env.NODE_ENV !== "production";
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
-      <h1 className="text-2xl font-semibold tracking-tight">{t("verify")}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        {method === "phone"
-          ? t("checkPhone", { phone: identifier })
-          : t("checkEmail", { email: identifier })}
-      </p>
-
-      <div className="mt-6">
-        <VerifyForm
-          method={method}
-          identifier={identifier}
-          next={params.next}
-          email={params.email}
-          phone={params.phone}
-        />
-      </div>
-    </div>
+    <AuthCard
+      title={t("verifyTitle")}
+      subtitle={email ? t("verifySubtitle", { email }) : t("verifySubtitleNoEmail")}
+      footer={
+        <Link href="/sign-in" className="font-medium text-primary hover:underline">
+          {t("backToSignIn")}
+        </Link>
+      }
+    >
+      {devMode ? (
+        <p className="mb-4 rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">{t("devHint")}</p>
+      ) : null}
+      <VerifyForm email={email} next={params.next} />
+    </AuthCard>
   );
 }
