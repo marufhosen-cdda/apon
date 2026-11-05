@@ -45,8 +45,11 @@ export default async function MarketingLayout({
           <div className="flex items-center gap-1.5">
             <ThemeToggle />
             <LocaleSwitcher />
-            <Button asChild size="sm" className="ml-1">
-              <Link href="/sign-in">{t("cta.button")}</Link>
+            <Button asChild size="sm" variant="ghost" className="ml-1 hidden sm:inline-flex">
+              <Link href="/sign-in">{tn("signIn")}</Link>
+            </Button>
+            <Button asChild size="sm">
+              <Link href="/sign-up">{t("cta.button")}</Link>
             </Button>
           </div>
         </div>
@@ -69,7 +72,7 @@ export default async function MarketingLayout({
             <h3 className="text-sm font-semibold">{t("footer.product")}</h3>
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               <li>
-                <Link href="/sign-in" className="hover:text-foreground">
+                <Link href="/sign-up" className="hover:text-foreground">
                   {t("cta.button")}
                 </Link>
               </li>

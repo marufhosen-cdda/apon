@@ -33,6 +33,7 @@ interface Props {
     name: string;
     avatarUrl: string | null;
     role: string;
+    username?: string | null;
   };
   /** Which panel this menu sits in — controls the "switch panel" entry. */
   panel?: "member" | "admin";
@@ -84,6 +85,9 @@ export function UserMenu({ user, panel = "member" }: Props) {
           <span className="min-w-0">
             <span className="block text-[11px] text-muted-foreground">{t("nav.signedInAs")}</span>
             <span className="block truncate text-sm font-semibold">{user.name || "—"}</span>
+            {user.username ? (
+              <span className="block truncate text-xs text-muted-foreground">@{user.username}</span>
+            ) : null}
           </span>
           <Badge variant={role === "admin" ? "info" : role === "host" ? "success" : "secondary"}>
             {t(`roles.${role}`)}

@@ -73,7 +73,7 @@ export default async function LandingPage() {
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button size="lg" asChild>
-                <Link href="/sign-in">
+                <Link href="/sign-up">
                   {t("hero.ctaPrimary")} <ArrowRight aria-hidden />
                 </Link>
               </Button>
@@ -251,7 +251,7 @@ export default async function LandingPage() {
                 <h2 className="text-3xl font-semibold tracking-tight">{t("cta.title")}</h2>
                 <p className="mt-3 text-muted-foreground">{t("cta.text")}</p>
                 <Button size="lg" className="mt-7" asChild>
-                  <Link href="/sign-in">
+                  <Link href="/sign-up">
                     {t("cta.button")} <ArrowRight aria-hidden />
                   </Link>
                 </Button>

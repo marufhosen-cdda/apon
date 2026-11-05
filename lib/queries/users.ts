@@ -1,9 +1,10 @@
 import "server-only";
 
-import { and, desc, eq, or, sql } from "drizzle-orm";
+import { and, desc, eq, isNotNull, or, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import {
+  accounts,
   areas,
   availability,
   blocks,
@@ -160,3 +161,13 @@ export async function getNotificationPrefs(userId: string) {
 }
 
 export { sql };
+
+/** True when the user has a password (credential account) — legacy code-only accounts don't. */
+export async function hasCredentialPassword(userId: string): Promise<boolean> {
+  const rows = await db
+    .select({ id: accounts.id })
+    .from(accounts)
+    .where(and(eq(accounts.userId, userId), eq(accounts.providerId, "credential"), isNotNull(accounts.password)))
+    .limit(1);
+  return rows.length > 0;
+}

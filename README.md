@@ -4,7 +4,7 @@
 
 Bilingual (English / বাংলা) app that matches people anywhere in Bangladesh into small weekly circles of 4–6 and gives them hosted, real-world activities to meet at.
 
-Next.js 16 (App Router, `proxy.ts`) · React 19 · Drizzle + PostgreSQL · Better Auth (phone/email OTP) · next-intl · Tailwind v4.
+Next.js 16 (App Router, `proxy.ts`) · React 19 · Drizzle + PostgreSQL · Better Auth (email/username + password) · Resend · next-intl · Tailwind v4.
 
 ## Getting started
 
@@ -16,7 +16,37 @@ npm run db:seed               # demo data + the full location tree
 npm run dev
 ```
 
-Sign in with a seeded email (e.g. `admin@apon.app`). OTP codes are printed by the dev server.
+Sign in with any seeded email or username (e.g. `admin@apon.app` or `rafi.ahmed`) and the demo password `Apon2026demo`.
+Without `RESEND_API_KEY`, development prints emails (including verification codes) to the dev-server console.
+
+## Authentication
+
+Email/username + password, built on Better Auth (`lib/auth.ts`):
+
+| Flow | Page | Endpoint |
+| --- | --- | --- |
+| Sign up (email, username, password) | `/sign-up` | `POST /api/auth/sign-up/email` |
+| Verify email with a 6-digit code (required) | `/verify` | `POST /api/auth/email-otp/verify-email` |
+| Sign in with email **or** username | `/sign-in` | `POST /api/auth/sign-in/email` · `/sign-in/username` |
+| Forgot / reset password | `/forgot-password` → `/reset-password` | `/email-otp/request-password-reset` → `/email-otp/reset-password` |
+| Change password, sign out other devices | Settings → Password & security | `/change-password` · `/revoke-other-sessions` |
+
+- Codes are sent through Resend with `RESEND_API_KEY` and `EMAIL_FROM` (server-only).
+  In production a missing key makes sending fail loudly instead of logging the code.
+- Passwords: scrypt hashes (Better Auth). 8–128 characters with a letter and a number,
+  and they can't contain the username or email. The same rules run in the forms and in a
+  server hook (`lib/validations/auth.ts`).
+- Usernames: 3–30 letters, numbers, `.` or `_`. Unique and case-insensitive; reserved names
+  are blocked.
+- Sessions: database-backed httpOnly, SameSite=Lax cookies (`Secure` in production),
+  30 days. A password reset revokes every session.
+- Abuse protection: rate limits on every auth endpoint. Duplicate-email sign-ups get the same
+  response as new ones (the owner is emailed instead), and sign-in errors stay generic.
+  Verification codes are hashed at rest in production.
+- The old passwordless email-code and phone-code sign-ins are disabled. Phone OTP is only
+  used to attach a verified number in Settings.
+- **Existing accounts** created with email codes have no password. They set one with
+  *Forgot password* (the reset creates the password).
 
 ## Locations (nationwide)
 

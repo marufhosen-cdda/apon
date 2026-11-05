@@ -64,6 +64,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 name: user.name,
                 avatarUrl: user.avatarUrl,
                 role: user.role,
+                username: user.displayUsername ?? user.username,
               }}
             />
           </div>

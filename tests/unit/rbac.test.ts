@@ -14,6 +14,9 @@ describe("ruleFor", () => {
     expect(ruleFor([]).section).toBe("public");
     expect(ruleFor(seg("guidelines")).section).toBe("public");
     expect(ruleFor(seg("sign-in")).section).toBe("auth");
+    expect(ruleFor(seg("sign-up")).section).toBe("auth");
+    expect(ruleFor(seg("forgot-password")).section).toBe("auth");
+    expect(ruleFor(seg("reset-password")).section).toBe("auth");
     expect(ruleFor(seg("home")).section).toBe("member");
     expect(ruleFor(seg("host")).section).toBe("member");
     expect(ruleFor(seg("host/new")).section).toBe("host");
@@ -39,6 +42,8 @@ describe("decideAccess", () => {
   it("keeps signed-in users out of the auth pages", () => {
     expect(decideAccess(seg("sign-in"), member)).toEqual({ kind: "redirect", to: "/home" });
     expect(decideAccess(seg("verify"), admin)).toEqual({ kind: "redirect", to: "/admin" });
+    expect(decideAccess(seg("sign-up"), member)).toEqual({ kind: "redirect", to: "/home" });
+    expect(decideAccess(seg("sign-up"), null)).toEqual({ kind: "allow" });
   });
 
   it("routes /dashboard to each role's panel", () => {
