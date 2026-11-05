@@ -123,7 +123,7 @@ export default async function HostPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <PageHeader
         title={t("title")}
         subtitle={ta("subtitle")}

@@ -7,6 +7,7 @@ import { z } from "zod";
 
 import { type ActionContext, createAction } from "@/lib/actions/action";
 import { db } from "@/lib/db";
+import { assertSelectableLocation } from "@/lib/queries/locations";
 import { availability, preferences, userInterests, users } from "@/lib/db/schema";
 import {
   areaStepSchema,
@@ -37,6 +38,7 @@ export const saveInterests = createAction({
 export const saveArea = createAction({
   schema: areaStepSchema,
   handler: async (input, { user }: ActionContext) => {
+    await assertSelectableLocation(input.areaId);
     await db
       .update(users)
       .set({ areaId: input.areaId, updatedAt: new Date() })

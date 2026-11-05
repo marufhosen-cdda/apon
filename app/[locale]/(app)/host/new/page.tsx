@@ -1,7 +1,6 @@
-import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
-import { requireOnboarded } from "@/lib/session";
+import { requireHost, requireOnboarded } from "@/lib/session";
 import { getBookableVenues } from "@/lib/queries/activities";
 import { getInterests } from "@/lib/queries/reference";
 import { PageHeader } from "@/components/features/shared/page-header";
@@ -13,8 +12,8 @@ export async function generateMetadata() {
 }
 
 export default async function NewActivityPage() {
-  const user = await requireOnboarded();
-  if (user.role !== "host" && user.role !== "admin") redirect("/host");
+  await requireHost();
+  await requireOnboarded();
 
   const [t, interests, venues] = await Promise.all([
     getTranslations("host.form"),

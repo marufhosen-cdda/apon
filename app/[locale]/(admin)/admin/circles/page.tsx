@@ -25,16 +25,16 @@ export default async function AdminCirclesPage() {
   ]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+        <h1 className="text-lg font-semibold tracking-tight">{t("title")}</h1>
         <RerunMatchingButton />
       </div>
 
       {circles.length === 0 ? (
         <EmptyState icon={VenetianMask} title={t("empty")} />
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-border">
+        <div>
           <Table>
             <TableHeader>
               <TableRow>

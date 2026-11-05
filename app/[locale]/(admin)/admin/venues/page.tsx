@@ -1,9 +1,10 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { MapPin } from "lucide-react";
 
 import { requireAdmin } from "@/lib/session";
 import { listAllVenues } from "@/lib/queries/admin";
-import { getAreas } from "@/lib/queries/reference";
+import { getLocationTrails } from "@/lib/queries/locations";
+import { formatTrail } from "@/lib/geo/levels";
 import { VenueForm } from "@/components/features/admin/venue-form";
 import { EmptyState } from "@/components/features/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
@@ -16,19 +17,18 @@ export async function generateMetadata() {
 
 export default async function AdminVenuesPage() {
   await requireAdmin();
-  const [t, areas, rows] = await Promise.all([
+  const [t, locale, rows] = await Promise.all([
     getTranslations("admin.venues"),
-    getAreas(),
+    getLocale(),
     listAllVenues(),
   ]);
-
-  const areaOptions = areas.map((a) => ({ id: a.id, nameEn: a.nameEn, nameBn: a.nameBn }));
+  const trails = await getLocationTrails(rows.map((r) => r.venue.areaId));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
-        <VenueForm areas={areaOptions} />
+        <h1 className="text-lg font-semibold tracking-tight">{t("title")}</h1>
+        <VenueForm />
       </div>
 
       {rows.length === 0 ? (
@@ -52,11 +52,15 @@ export default async function AdminVenuesPage() {
                 <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
                   <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden />
                   {venue.address}
-                  {areaName ? ` · ${areaName}` : ""}
+                  {trails.get(venue.areaId)
+                    ? ` · ${formatTrail(trails.get(venue.areaId)!, locale)}`
+                    : areaName
+                      ? ` · ${areaName}`
+                      : ""}
                 </p>
 
                 <VenueForm
-                  areas={areaOptions}
+                  areaTrail={trails.get(venue.areaId) ?? []}
                   mode="edit"
                   label={t("edit")}
                   initial={{

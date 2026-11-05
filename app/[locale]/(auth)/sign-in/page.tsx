@@ -20,7 +20,7 @@ export default async function SignInPage({
   ]);
 
   return (
-    <div className="rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
+    <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
       <h1 className="text-2xl font-semibold tracking-tight">{t("signInTitle")}</h1>
       <p className="mt-2 text-sm text-muted-foreground">{t("signInSubtitle")}</p>
 

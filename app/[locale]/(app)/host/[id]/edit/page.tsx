@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
-import { requireOnboarded } from "@/lib/session";
+import { requireHost, requireOnboarded } from "@/lib/session";
 import { getHostActivity } from "@/lib/queries/host";
 import { getBookableVenues } from "@/lib/queries/activities";
 import { getInterests } from "@/lib/queries/reference";
@@ -19,6 +19,7 @@ export default async function EditActivityPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireHost();
   const user = await requireOnboarded();
   const { id } = await params;
   const activityId = Number(id);

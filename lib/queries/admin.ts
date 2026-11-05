@@ -2,6 +2,8 @@ import "server-only";
 
 import { and, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 
+import { cache } from "react";
+
 import { db } from "@/lib/db";
 import {
   activities,
@@ -258,4 +260,44 @@ export async function getAdminMetrics() {
     northStar: row?.sameCircleThrice ?? 0,
     totals: { onboardingCount, attendedCount, feedbackCount },
   };
+}
+
+/** Work-queue counts for the admin sidebar badges. */
+export const getAdminQueueCounts = cache(async () => {
+  const row = await scalar<{
+    openReports: number;
+    pendingApplications: number;
+    pendingActivities: number;
+    openRequests: number;
+  }>(sql`
+    select
+      (select count(*)::int from reports where status = 'open') as "openReports",
+      (select count(*)::int from host_applications where status = 'pending') as "pendingApplications",
+      (select count(*)::int from activities where status = 'pending') as "pendingActivities",
+      (select count(*)::int from circle_requests where status = 'open') as "openRequests"
+  `);
+  return row ?? { openReports: 0, pendingApplications: 0, pendingActivities: 0, openRequests: 0 };
+});
+
+/** Members and venues per division (admin overview "where are members"). */
+export async function getMembersByDivision() {
+  const rows = await db.execute<{ id: number; nameEn: string; nameBn: string; members: number; venues: number }>(sql`
+    select d.id, d.name_en as "nameEn", d.name_bn as "nameBn",
+      (select count(*)::int from users u join areas a on a.id = u.area_id
+        where u.deleted_at is null and (a.id = d.id or d.id = any(a.ancestor_ids))) as "members",
+      (select count(*)::int from venues v join areas a on a.id = v.area_id
+        where v.deleted_at is null and (a.id = d.id or d.id = any(a.ancestor_ids))) as "venues"
+    from areas d
+    where d.level = 'division'
+    order by "members" desc, d.name_en
+  `);
+  return [...rows];
+}
+
+/** Role and status breakdown for the overview. */
+export async function getRoleBreakdown() {
+  const rows = await db.execute<{ role: string; count: number }>(sql`
+    select role, count(*)::int as count from users where deleted_at is null group by role
+  `);
+  return Object.fromEntries([...rows].map((r) => [r.role, r.count])) as Record<string, number>;
 }

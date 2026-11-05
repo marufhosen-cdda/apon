@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { CalendarClock, MapPin, Pencil, Users } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
-import { requireOnboarded } from "@/lib/session";
+import { requireHost, requireOnboarded } from "@/lib/session";
 import { getHostActivity } from "@/lib/queries/host";
 import { getActivityAttendees } from "@/lib/queries/activities";
 import { PageHeader } from "@/components/features/shared/page-header";
@@ -28,6 +28,7 @@ export default async function HostActivityPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireHost();
   const user = await requireOnboarded();
   const { id } = await params;
   const activityId = Number(id);
@@ -47,7 +48,7 @@ export default async function HostActivityPage({
   const canCancel = activity.status === "pending" || activity.status === "approved";
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <PageHeader
         title={activity.title}
         subtitle={`${th(`status.${activity.status}`)} · ${formatDateTime(activity.startsAt, user.locale)}`}

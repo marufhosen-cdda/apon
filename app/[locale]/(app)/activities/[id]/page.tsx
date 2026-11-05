@@ -91,14 +91,14 @@ export default async function ActivityDetailPage({ params, searchParams }: Props
     (query.feedback === "1" || !myFeedback);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <div>
         <Button variant="ghost" size="sm" asChild className="-ml-2 mb-4">
           <Link href="/activities">← {t("detail.backToList")}</Link>
         </Button>
 
-        <FadeUp className="relative overflow-hidden rounded-3xl border border-border">
-          <div className="relative aspect-16/9 sm:aspect-21/9">
+        <FadeUp className="relative overflow-hidden rounded-2xl border border-border">
+          <div className="relative h-48 bg-gradient-to-br from-primary/40 via-primary/15 to-muted sm:h-60">
             <Image
               src={activity.imageUrl ?? cover.src}
               alt={cover.alt}
@@ -114,9 +114,9 @@ export default async function ActivityDetailPage({ params, searchParams }: Props
 
           <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
             <div className="mb-3 flex flex-wrap gap-2">
-              {activity.category ? <Badge>{activity.category.nameEn}</Badge> : null}
-              {activity.womenOnly ? <Badge variant="secondary">{t("filters.womenOnly")}</Badge> : null}
-              <Badge variant={activity.costBdt === 0 ? "success" : "default"}>
+              {activity.category ? <Badge className="bg-card/95 text-primary">{activity.category.nameEn}</Badge> : null}
+              {activity.womenOnly ? <Badge variant="secondary" className="bg-card/95">{t("filters.womenOnly")}</Badge> : null}
+              <Badge variant={activity.costBdt === 0 ? "success" : "default"} className="bg-card/95">
                 {activity.costBdt === 0 ? t("detail.costFree") : `${activity.costBdt} ৳`}
               </Badge>
               {activity.status !== "approved" ? (
@@ -129,7 +129,7 @@ export default async function ActivityDetailPage({ params, searchParams }: Props
                 </Badge>
               ) : null}
             </div>
-            <h1 className="max-w-3xl text-2xl font-semibold text-white sm:text-3xl">
+            <h1 className="max-w-3xl text-xl font-semibold text-white drop-shadow sm:text-2xl">
               {activity.title}
             </h1>
           </div>

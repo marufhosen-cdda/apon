@@ -61,7 +61,7 @@ export default async function CircleDetailPage({
     }));
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <PageHeader
         title={circle.name}
         subtitle={t("timePollHint")}

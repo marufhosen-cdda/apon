@@ -1,25 +1,30 @@
 import "server-only";
 
+import { cache } from "react";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { forbidden, redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { getLocale } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, type User } from "@/lib/db/schema";
+import { type Permission, type Role, can, toRole } from "@/lib/rbac";
 
 /** Current Better Auth session (or null). */
 export async function getSession() {
   return auth.api.getSession({ headers: await headers() });
 }
 
-/** Full row from `users`, including status/role/profile columns. */
-export async function getCurrentUser(): Promise<User | null> {
+/**
+ * Full row from `users`, including status/role/profile columns.
+ * Memoised per request, so layered guards (layout + page) cost one query.
+ */
+export const getCurrentUser = cache(async (): Promise<User | null> => {
   const session = await getSession();
   if (!session?.user?.id) return null;
   const rows = await db.select().from(users).where(eq(users.id, session.user.id)).limit(1);
   return rows[0] ?? null;
-}
+});
 
 export type GuardedUser = User;
 
@@ -45,14 +50,31 @@ export async function requireUser(nextPathname?: string): Promise<User> {
   return user;
 }
 
-/** Admin-only guard used by every (admin) page. */
-export async function requireAdmin(): Promise<User> {
+/**
+ * Role guard for layouts and pages. Signed-out users are sent to sign-in;
+ * signed-in users without the role get the 403 page (`forbidden.tsx`).
+ */
+export async function requireRole(roles: readonly Role[]): Promise<User> {
   const user = await requireUser();
-  if (user.role !== "admin") {
-    const locale = await getLocale();
-    redirect(`/${locale}/home`);
-  }
+  if (!roles.includes(toRole(user.role))) forbidden();
   return user;
+}
+
+/** Permission guard, e.g. `requirePermission("admin.locations")`. */
+export async function requirePermission(permission: Permission): Promise<User> {
+  const user = await requireUser();
+  if (!can(user.role, permission)) forbidden();
+  return user;
+}
+
+/** Admin-only guard used by the Admin Panel layout and every admin page. */
+export async function requireAdmin(): Promise<User> {
+  return requireRole(["admin"]);
+}
+
+/** Host tools (create/manage activities). */
+export async function requireHost(): Promise<User> {
+  return requireRole(["host", "admin"]);
 }
 
 /** Phone verification is required before joining circles or activities. */

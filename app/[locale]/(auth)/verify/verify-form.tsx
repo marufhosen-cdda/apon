@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { useRouter } from "@/i18n/navigation";
 import { authClient } from "@/lib/auth-client";
+import { toBdE164 } from "@/lib/validations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,7 +46,7 @@ export function VerifyForm({ method, identifier, next, phone }: Props) {
     startTransition(async () => {        const result =
           method === "email"
             ? await authClient.signIn.emailOtp({ email: identifier, otp: code })
-            : await authClient.phoneNumber.verify({ phoneNumber: identifier, code });
+            : await authClient.phoneNumber.verify({ phoneNumber: toBdE164(identifier), code });
 
       if (result.error) {
         const message = result.error.message ?? "";
@@ -57,7 +58,7 @@ export function VerifyForm({ method, identifier, next, phone }: Props) {
 
       toast.success(method === "phone" ? t("phoneVerified") : t("newHere"));
       const target =
-        next && next.startsWith("/") && !next.startsWith("//") ? next : "/home";
+        next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
       window.location.href = target;
     });
   }
@@ -68,7 +69,7 @@ export function VerifyForm({ method, identifier, next, phone }: Props) {
       const result =
         method === "email"
           ? await authClient.emailOtp.sendVerificationOtp({ email: identifier, type: "sign-in" })
-          : await authClient.phoneNumber.sendOtp({ phoneNumber: phone ?? identifier });
+          : await authClient.phoneNumber.sendOtp({ phoneNumber: toBdE164(phone ?? identifier) });
       if (result.error) {
         setError(result.error.message ?? t("errorTooMany"));
         return;

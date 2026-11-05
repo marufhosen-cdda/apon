@@ -6,13 +6,14 @@ import { eq } from "drizzle-orm";
 
 import { env } from "@/lib/env";
 import * as schema from "@/lib/db/schema";
+import { syncLocations } from "@/lib/geo/sync";
 
 /**
  * Seed script — `npm run db:seed`.
  *
  * Idempotent: it truncates the public schema and rebuilds it from scratch.
  * Produces the demo described in the README:
- *   4 zones / 16 areas, 20 interests, 10 approved venues,
+ *   the nationwide location tree, 20 interests, 13 approved venues,
  *   1 admin, 3 hosts, 40 members, 12 activities, 2 active circles,
  *   a time poll with votes, circle chat, feedback and notifications.
  */
@@ -24,26 +25,18 @@ const db = drizzle(client, { schema });
 // Reference data
 // ---------------------------------------------------------------------------
 
-const areas = [
-  { slug: "dhanmondi", nameEn: "Dhanmondi", nameBn: "ধানমন্ডি", zone: "dhanmondi", zoneLabelEn: "Dhanmondi · Mohammadpur · Lalmatia", zoneLabelBn: "ধানমন্ডি · মোহাম্মদপুর · লালমাতিয়া" },
-  { slug: "mohammadpur", nameEn: "Mohammadpur", nameBn: "মোহাম্মদপুর", zone: "dhanmondi", zoneLabelEn: "Dhanmondi · Mohammadpur · Lalmatia", zoneLabelBn: "ধানমন্ডি · মোহাম্মদপুর · লালমাতিয়া" },
-  { slug: "lalmatia", nameEn: "Lalmatia", nameBn: "লালমাতিয়া", zone: "dhanmondi", zoneLabelEn: "Dhanmondi · Mohammadpur · Lalmatia", zoneLabelBn: "ধানমন্ডি · মোহাম্মদপুর · লালমাতিয়া" },
-  { slug: "kalabagan", nameEn: "Kalabagan", nameBn: "কলাবাগান", zone: "dhanmondi", zoneLabelEn: "Dhanmondi · Mohammadpur · Lalmatia", zoneLabelBn: "ধানমন্ডি · মোহাম্মদপুর · লালমাতিয়া" },
-
-  { slug: "gulshan-1", nameEn: "Gulshan 1", nameBn: "গুলশান ১", zone: "gulshan", zoneLabelEn: "Gulshan · Banani · Bashundhara", zoneLabelBn: "গুলশান · বনানী · বসুন্ধরা" },
-  { slug: "gulshan-2", nameEn: "Gulshan 2", nameBn: "গুলশান ২", zone: "gulshan", zoneLabelEn: "Gulshan · Banani · Bashundhara", zoneLabelBn: "গুলশান · বনানী · বসুন্ধরা" },
-  { slug: "banani", nameEn: "Banani", nameBn: "বনানী", zone: "gulshan", zoneLabelEn: "Gulshan · Banani · Bashundhara", zoneLabelBn: "গুলশান · বনানী · বসুন্ধরা" },
-  { slug: "bashundhara", nameEn: "Bashundhara R/A", nameBn: "বসুন্ধরা আর এ", zone: "gulshan", zoneLabelEn: "Gulshan · Banani · Bashundhara", zoneLabelBn: "গুলশান · বনানী · বসুন্ধরা" },
-
-  { slug: "mirpur-10", nameEn: "Mirpur 10", nameBn: "মিরপুর ১০", zone: "mirpur", zoneLabelEn: "Mirpur", zoneLabelBn: "মিরপুর" },
-  { slug: "mirpur-6", nameEn: "Mirpur 6", nameBn: "মিরপুর ৬", zone: "mirpur", zoneLabelEn: "Mirpur", zoneLabelBn: "মিরপুর" },
-  { slug: "kazipara", nameEn: "Kazipara", nameBn: "কাজীপাড়া", zone: "mirpur", zoneLabelEn: "Mirpur", zoneLabelBn: "মিরপুর" },
-  { slug: "rupnagar", nameEn: "Rupnagar", nameBn: "রূপনগর", zone: "mirpur", zoneLabelEn: "Mirpur", zoneLabelBn: "মিরপুর" },
-
-  { slug: "uttara-3", nameEn: "Uttara Sector 3", nameBn: "উত্তরা সেক্টর ৩", zone: "uttara", zoneLabelEn: "Uttara", zoneLabelBn: "উত্তরা" },
-  { slug: "uttara-7", nameEn: "Uttara Sector 7", nameBn: "উত্তরা সেক্টর ৭", zone: "uttara", zoneLabelEn: "Uttara", zoneLabelBn: "উত্তরা" },
-  { slug: "uttara-11", nameEn: "Uttara Sector 11", nameBn: "উত্তরা সেক্টর ১১", zone: "uttara", zoneLabelEn: "Uttara", zoneLabelBn: "উত্তরা" },
-  { slug: "ashkona", nameEn: "Ashkona", nameBn: "আশকোনা", zone: "uttara", zoneLabelEn: "Uttara", zoneLabelBn: "উত্তরা" },
+/**
+ * Where seeded people live. The full nationwide tree (≈5,900 divisions,
+ * districts, city corporations, thanas, wards, upazilas, unions and
+ * neighbourhoods) comes from `lib/geo` via `syncLocations`; these are the
+ * slugs demo members are spread across. The first 16 are the original Dhaka
+ * demo neighbourhoods (four matching zones), so circles still form.
+ */
+const memberAreaSlugs = [
+  "dhanmondi", "mohammadpur", "lalmatia", "kalabagan",
+  "gulshan-1", "gulshan-2", "banani", "bashundhara",
+  "mirpur-10", "mirpur-6", "kazipara", "rupnagar",
+  "uttara-3", "uttara-7", "uttara-11", "ashkona",
 ] as const;
 
 const interests = [
@@ -80,6 +73,9 @@ const venues = [
   { name: "Mirpur Indoor Stadium", area: "mirpur-10", address: "Mirpur 10, near Circle", type: "sports", mapUrl: "https://maps.google.com/?q=Mirpur+Stadium" },
   { name: "Uttara Sector 7 Park", area: "uttara-7", address: "Sector 7, Uttara", type: "park", mapUrl: "https://maps.google.com/?q=Uttara+Sector+7+Park" },
   { name: "Aarong Café, Uttara", area: "uttara-3", address: "Sector 3, Uttara", type: "cafe", mapUrl: "https://maps.google.com/?q=Uttara+Sector+3" },
+  { name: "CRB Hill Walk", area: "khulshi", address: "Circuit House Road, Khulshi, Chattogram", type: "park", mapUrl: "https://maps.google.com/?q=CRB+Chattogram" },
+  { name: "Zindabazar Book Corner", area: "zindabazar", address: "Zindabazar, Sylhet", type: "cafe", mapUrl: "https://maps.google.com/?q=Zindabazar+Sylhet" },
+  { name: "Savar Smriti Soudho Grounds", area: "dhaka-savar", address: "National Martyrs' Memorial, Savar, Dhaka", type: "park", mapUrl: "https://maps.google.com/?q=National+Martyrs+Memorial+Savar" },
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -112,7 +108,7 @@ interface SeedMember {
 }
 
 function buildMembers(): SeedMember[] {
-  const zoneSlugs = areas.map((a) => a.slug);
+  const zoneSlugs = memberAreaSlugs;
   return firstNames.map((first, i) => {
     const last = lastNames[i % lastNames.length];
     const gender = i % 2 === 0 ? "female" : "male";
@@ -184,11 +180,11 @@ async function main() {
     RESTART IDENTITY CASCADE;
   `);
 
-  await db
-    .insert(schema.areas)
-    .values(areas.map((a) => ({ ...a, createdAt: new Date() })));
+  const geo = await syncLocations(db);
+  console.log(`  locations: ${geo.total}`, geo.counts);
 
   const allAreas = await db.select().from(schema.areas);
+  const zoneOf = new Map(allAreas.map((a) => [a.slug, a.zone]));
   const areaId = new Map(allAreas.map((a) => [a.slug, a.id]));
 
   const interestRows = await db
@@ -306,8 +302,8 @@ async function main() {
 
   // --- Activities ---------------------------------------------------------
   const hostByArea = (slug: string) => {
-    const zone = areas.find((a) => a.slug === slug)?.zone;
-    const candidates = hostProfiles.filter((h) => areas.find((a) => a.slug === h.areaSlug)?.zone === zone);
+    const zone = zoneOf.get(slug);
+    const candidates = hostProfiles.filter((h) => zoneOf.get(h.areaSlug) === zone);
     return (candidates[0] ?? hostProfiles[0]).id;
   };
 
@@ -415,10 +411,10 @@ async function main() {
 
   // --- Circles ------------------------------------------------------------
   const dhanmondiMembers = members
-    .filter((m) => areas.find((a) => a.slug === m.areaSlug)?.zone === "dhanmondi")
+    .filter((m) => zoneOf.get(m.areaSlug) === "dhanmondi")
     .slice(0, 5);
   const gulshanMembers = members
-    .filter((m) => areas.find((a) => a.slug === m.areaSlug)?.zone === "gulshan")
+    .filter((m) => zoneOf.get(m.areaSlug) === "gulshan")
     .slice(0, 4);
 
   const [circle1] = await db

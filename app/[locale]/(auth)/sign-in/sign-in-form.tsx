@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { useRouter } from "@/i18n/navigation";
 import { authClient } from "@/lib/auth-client";
+import { toBdE164 } from "@/lib/validations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,7 +57,7 @@ export function SignInForm({ next }: { next?: string }) {
     }
     setErrors({});
     startTransition(async () => {
-      const { error } = await authClient.phoneNumber.sendOtp({ phoneNumber: phone.trim() });
+      const { error } = await authClient.phoneNumber.sendOtp({ phoneNumber: toBdE164(phone) });
       if (error) {
         toast.error(error.message ?? t("errorInvalidPhone"));
         return;

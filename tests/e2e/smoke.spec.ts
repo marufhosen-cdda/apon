@@ -57,7 +57,7 @@ test.describe("member journey", () => {
 
     // The code lands in the verifications table (Better Auth stores it in clear).
     await expect
-      .poll(() => readOtp(email), { message: "email OTP should be stored" })
+      .poll(() => readOtp(email).catch(() => ""), { message: "email OTP should be stored" })
       .toMatch(/^\d{6}$/);
     const emailCode = await readOtp(email);
 
@@ -69,19 +69,21 @@ test.describe("member journey", () => {
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Set up your profile");
 
     // Step 1 — interests (3–8).
-    const chips = page.locator('button[aria-pressed]');
+    const chips = page.locator('main button[aria-pressed]');
     for (let index = 0; index < 3; index += 1) await chips.nth(index).click();
-    await page.getByRole("button", { name: "Next" }).click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
 
-    // Step 2 — area.
+    // Step 2 — location: search the nationwide tree, then narrow with the cascade.
     await page.getByRole("heading", { name: /Where do you live/ }).waitFor();
-    await page.locator('button[aria-pressed]').first().click();
-    await page.getByRole("button", { name: "Next" }).click();
+    await page.getByPlaceholder(/Search any place/).fill("Gulshan 2");
+    await page.getByRole("option", { name: /Gulshan 2/ }).first().click();
+    await expect(page.getByRole("button", { name: "Gulshan 2" })).toBeVisible();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
 
     // Step 3 — availability.
     await page.getByRole("heading", { name: /When are you usually free/ }).waitFor();
-    await page.locator('button[aria-pressed]').first().click();
-    await page.getByRole("button", { name: "Next" }).click();
+    await page.locator('main button[aria-pressed]').first().click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
 
     // Step 4 — preferences + guidelines.
     await page.getByRole("heading", { name: /How should your circle look/ }).waitFor();
@@ -96,7 +98,7 @@ test.describe("member journey", () => {
     await page.getByRole("button", { name: "Send code" }).click();
 
     await expect
-      .poll(() => readOtp(phone.replace(/^0/, "")), { message: "SMS OTP should be stored" })
+      .poll(() => readOtp(phone.replace(/^0/, "")).catch(() => ""), { message: "SMS OTP should be stored" })
       .toMatch(/^\d{6}$/);
     const smsCode = await readOtp(phone.replace(/^0/, ""));
 
@@ -120,5 +122,14 @@ test.describe("member journey", () => {
       await expect(page.getByText(address)).toBeVisible();
       await expect(page.getByText("Address visible after you RSVP")).toBeHidden();
     }
+
+    // ------------------------------------------------ role-based access
+    // Members get a 403 for the Admin Panel and host tools, not a silent redirect.
+    const adminResponse = await page.goto("/en/admin");
+    expect(adminResponse?.status()).toBe(403);
+    await expect(page.getByRole("heading", { name: /don't have access/ })).toBeVisible();
+
+    const hostResponse = await page.goto("/en/host/new");
+    expect(hostResponse?.status()).toBe(403);
   });
 });

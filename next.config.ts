@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
   // Bondhu reads live data from Postgres on every request; classic dynamic
   // rendering keeps Server Components + Server Actions predictable.
   cacheComponents: false,
+  experimental: {
+    // Enables `forbidden()` / `forbidden.tsx` for role-based 403 pages.
+    authInterrupts: true,
+  },
   images: {
     remotePatterns: [
       {

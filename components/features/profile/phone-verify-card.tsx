@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 import { Link, useRouter } from "@/i18n/navigation";
 import { authClient } from "@/lib/auth-client";
-import { phoneSchema } from "@/lib/validations";
+import { phoneSchema, toBdE164 } from "@/lib/validations";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -58,7 +58,7 @@ export function PhoneVerifyCard({
       return;
     }
     startTransition(async () => {
-      const result = await authClient.phoneNumber.sendOtp({ phoneNumber: parsed.data });
+      const result = await authClient.phoneNumber.sendOtp({ phoneNumber: toBdE164(parsed.data) });
       if (result.error) {
         toast.error(ta("errorTooMany"));
         return;
@@ -75,7 +75,7 @@ export function PhoneVerifyCard({
       return;
     }
     startTransition(async () => {
-      const result = await authClient.phoneNumber.verify({ phoneNumber: phone, code });
+      const result = await authClient.phoneNumber.verify({ phoneNumber: toBdE164(phone), code, updatePhoneNumber: true });
       if (result.error) {
         toast.error(ta("errorInvalidCode"));
         return;

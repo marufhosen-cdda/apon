@@ -37,7 +37,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
   const areaName = profile.area ? profile.area.nameEn : null;
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8">
+    <div className="mx-auto max-w-3xl space-y-5">
       <FadeUp className="flex flex-wrap items-start gap-5">
         <Avatar className="size-20">
           {profile.avatarUrl ? <AvatarImage src={profile.avatarUrl} alt="" /> : null}

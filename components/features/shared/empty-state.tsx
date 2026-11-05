@@ -26,7 +26,7 @@ export function EmptyState({
   children?: React.ReactNode;
 }) {
   return (
-    <FadeUp className="flex flex-col items-center rounded-3xl border border-dashed border-border bg-card/60 px-6 py-14 text-center">
+    <FadeUp className="flex flex-col items-center rounded-xl border border-dashed border-border bg-card/60 px-6 py-10 text-center">
       <EmptyIllustration />
 
       <h2 className="mt-5 text-lg font-semibold">{title}</h2>

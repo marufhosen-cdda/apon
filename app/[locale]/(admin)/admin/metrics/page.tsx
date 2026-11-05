@@ -59,8 +59,8 @@ export default async function AdminMetricsPage() {
   ] as const;
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+    <div className="space-y-5">
+      <h1 className="text-lg font-semibold tracking-tight">{t("title")}</h1>
 
       <FadeUp>
         <Card className="border-primary/30 bg-primary/5">

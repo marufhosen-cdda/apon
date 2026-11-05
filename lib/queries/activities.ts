@@ -13,7 +13,7 @@ import {
   venues,
 } from "@/lib/db/schema";
 
-export const ACTIVITIES_PAGE_SIZE = 9;
+export const ACTIVITIES_PAGE_SIZE = 12;
 
 export interface ActivityFilters {
   category?: string;
@@ -50,8 +50,11 @@ function buildWhere(filters: ActivityFilters): SQL | undefined {
     )`);
   }
   if (filters.area) {
-    conditions.push(sql`${activities.areaId} = (
-      select a.id from areas a where a.slug = ${filters.area}
+    // Everything inside the chosen place: "Dhaka division" includes Gulshan 2.
+    conditions.push(sql`${activities.areaId} in (
+      select l.id from areas l, areas pick
+      where pick.slug = ${filters.area}
+        and (l.id = pick.id or pick.id = any(l.ancestor_ids))
     )`);
   }
 
