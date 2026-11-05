@@ -6,6 +6,7 @@ import { eq, sql } from "drizzle-orm";
 
 import { ActionError, type ActionContext, createAction } from "@/lib/actions/action";
 import { db } from "@/lib/db";
+import { assertSelectableLocation } from "@/lib/queries/locations";
 import {
   activities,
   hostApplications,
@@ -200,6 +201,7 @@ export const saveVenue = createAction({
   authorize: "admin",
   revalidate: ["/admin/venues", "/admin"],
   handler: async (input) => {
+    await assertSelectableLocation(input.areaId);
     const values = {
       name: input.name,
       areaId: input.areaId,

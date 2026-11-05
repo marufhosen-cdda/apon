@@ -6,6 +6,7 @@ import { eq, sql } from "drizzle-orm";
 
 import { ActionError, type ActionContext, createAction } from "@/lib/actions/action";
 import { db } from "@/lib/db";
+import { assertSelectableLocation } from "@/lib/queries/locations";
 import {
   activities,
   availability,
@@ -30,6 +31,7 @@ export const updateProfile = createAction({
   schema: profileSchema,
   revalidate: (_input, user) => [`/profile/${user.id}`, "/settings", "/home"],
   handler: async (input, { user }: ActionContext): Promise<{ id: string }> => {
+    if (input.areaId) await assertSelectableLocation(input.areaId);
     const [updated] = await db
       .update(users)
       .set({

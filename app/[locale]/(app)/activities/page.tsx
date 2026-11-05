@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { requireOnboarded } from "@/lib/session";
-import { getAreas, getInterests } from "@/lib/queries/reference";
+import { getInterests } from "@/lib/queries/reference";
+import { getLocationBySlug, getLocationTrail } from "@/lib/queries/locations";
 import { listActivities } from "@/lib/queries/activities";
 import { PageHeader } from "@/components/features/shared/page-header";
 import { EmptyState } from "@/components/features/shared/empty-state";
@@ -27,12 +28,13 @@ interface Props {
 
 export default async function ActivitiesPage({ searchParams }: Props) {
   const user = await requireOnboarded();
-  const [t, params, interests, areas] = await Promise.all([
+  const [t, params, interests] = await Promise.all([
     getTranslations("activities"),
     searchParams,
     getInterests(),
-    getAreas(),
   ]);
+  const picked = params.area ? await getLocationBySlug(params.area) : null;
+  const areaTrail = await getLocationTrail(picked?.id);
 
   const filters = {
     category: params.category || undefined,
@@ -49,7 +51,7 @@ export default async function ActivitiesPage({ searchParams }: Props) {
     <div className="space-y-6">
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
 
-      <ActivityFilters interests={interests} areas={areas} />
+      <ActivityFilters interests={interests} areaTrail={areaTrail} />
 
       <p className="text-sm text-muted-foreground" aria-live="polite">
         {t("filters.results", { count: result.total })}

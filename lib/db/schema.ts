@@ -1,7 +1,9 @@
 import { relations, sql } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   bigint,
   boolean,
+  doublePrecision,
   index,
   integer,
   jsonb,
@@ -130,6 +132,17 @@ export const rateLimitBuckets = pgTable("rate_limits", {
 // Reference data
 // ---------------------------------------------------------------------------
 
+/**
+ * Every place in Bangladesh, as one adjacency-list tree (see `lib/geo`):
+ *
+ *   division → district → upazila → union → village
+ *                       → city_corporation → thana → area
+ *                                          → ward
+ *
+ * Users, venues and activities point at any node. `ancestorIds` (root first)
+ * makes "everything inside Dhaka division" a single indexed lookup, and
+ * `zone` is the matching cluster a node belongs to (inherited by children).
+ */
 export const areas = pgTable(
   "areas",
   {
@@ -137,13 +150,29 @@ export const areas = pgTable(
     slug: text("slug").notNull().unique(),
     nameEn: text("name_en").notNull(),
     nameBn: text("name_bn").notNull(),
-    /** Neighbourhood cluster used by matching (e.g. "dhanmondi"). */
+    /** division | district | city_corporation | upazila | thana | ward | union | area | village */
+    level: text("level").notNull().default("area"),
+    parentId: integer("parent_id").references((): AnyPgColumn => areas.id, { onDelete: "restrict" }),
+    /** Ids of every ancestor, root (division) first. Excludes the node itself. */
+    ancestorIds: integer("ancestor_ids").array().notNull().default(sql`'{}'::integer[]`),
+    /** Source reference, e.g. `upazila:123` from the BBS-derived dataset. */
+    code: text("code"),
+    lat: doublePrecision("lat"),
+    lng: doublePrecision("lng"),
+    isActive: boolean("is_active").notNull().default(true),
+    /** Matching cluster (e.g. "dhanmondi", "dhaka-savar"). */
     zone: text("zone").notNull(),
     zoneLabelEn: text("zone_label_en").notNull(),
     zoneLabelBn: text("zone_label_bn").notNull(),
     createdAt: createdAt(),
   },
-  (t) => [index("areas_zone_idx").on(t.zone)],
+  (t) => [
+    index("areas_zone_idx").on(t.zone),
+    index("areas_parent_idx").on(t.parentId),
+    index("areas_level_idx").on(t.level),
+    index("areas_ancestors_idx").using("gin", t.ancestorIds),
+    index("areas_name_en_idx").on(sql`lower(${t.nameEn})`),
+  ],
 );
 
 export const interests = pgTable("interests", {

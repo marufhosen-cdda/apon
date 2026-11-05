@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
 
@@ -12,8 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
+import { LocationPicker } from "@/components/features/locations/location-picker";
+import type { LocationCrumb } from "@/lib/geo/levels";
 
-type Area = { id: number; nameEn: string; nameBn: string; zoneLabelEn: string; zoneLabelBn: string };
 
 export interface ProfileFormValues {
   name: string;
@@ -26,16 +27,15 @@ export interface ProfileFormValues {
 
 /** Name, gender, birth year, area, bio and avatar — never contact details. */
 export function ProfileEditForm({
-  areas,
+  areaTrail,
   initial,
 }: {
-  areas: Area[];
+  areaTrail: LocationCrumb[];
   initial: ProfileFormValues;
 }) {
   const t = useTranslations("profile");
   const te = useTranslations("errors");
-  const tn = useTranslations("onboarding.area");
-  const locale = useLocale();
+  const tl = useTranslations("locations");
   const router = useRouter();
   const [values, setValues] = useState<ProfileFormValues>(initial);
   const [pending, startTransition] = useTransition();
@@ -48,7 +48,13 @@ export function ProfileEditForm({
     startTransition(async () => {
       const result = await updateProfile(undefined, values);
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("validation") : result.error);
+        toast.error(
+          result.error === "locations.pickMoreSpecific"
+            ? tl("pickMoreSpecific")
+            : result.error.startsWith("errors.")
+              ? te("validation")
+              : result.error,
+        );
         return;
       }
       toast.success(t("saved"));
@@ -97,20 +103,11 @@ export function ProfileEditForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="area">{t("areaLabel")}</Label>
-        <NativeSelect
-          id="area"
-          value={values.areaId}
-          onChange={(e) => set("areaId", e.target.value)}
-        >
-          <option value="">{tn("choose")}</option>
-          {areas.map((area) => (
-            <option key={area.id} value={area.id}>
-              {locale === "bn" ? area.nameBn : area.nameEn} ·{" "}
-              {locale === "bn" ? area.zoneLabelBn : area.zoneLabelEn}
-            </option>
-          ))}
-        </NativeSelect>
+        <Label>{t("areaLabel")}</Label>
+        <LocationPicker
+          initialTrail={areaTrail}
+          onChange={(id) => set("areaId", id ? String(id) : "")}
+        />
       </div>
 
       <div className="space-y-2">

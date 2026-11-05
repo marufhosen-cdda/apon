@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Loader2, Pencil, Plus, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -21,6 +21,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Switch } from "@/components/ui/switch";
+import { LocationPicker } from "@/components/features/locations/location-picker";
+import type { LocationCrumb } from "@/lib/geo/levels";
 
 export interface VenueFormValues {
   id?: number;
@@ -33,18 +35,17 @@ export interface VenueFormValues {
   approved: boolean;
 }
 
-type Area = { id: number; nameEn: string; nameBn: string };
 
 const TYPES = ["cafe", "park", "sports", "coworking", "other"] as const;
 
 /** Venues power the host flow: only approved public venues are bookable. */
 export function VenueForm({
-  areas,
+  areaTrail = [],
   initial,
   mode = "create",
   label,
 }: {
-  areas: Area[];
+  areaTrail?: LocationCrumb[];
   initial?: VenueFormValues;
   mode?: "create" | "edit";
   label?: string;
@@ -52,7 +53,6 @@ export function VenueForm({
   const t = useTranslations("admin.venues");
   const tc = useTranslations("common");
   const te = useTranslations("errors");
-  const locale = useLocale();
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
@@ -60,7 +60,7 @@ export function VenueForm({
   const [values, setValues] = useState<VenueFormValues>(
     initial ?? {
       name: "",
-      areaId: areas[0] ? String(areas[0].id) : "",
+      areaId: "",
       address: "",
       mapUrl: "",
       type: "cafe",
@@ -136,22 +136,16 @@ export function VenueForm({
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="venue-area">{t("area")}</Label>
-              <NativeSelect
-                id="venue-area"
-                value={values.areaId}
-                onChange={(e) => set("areaId", e.target.value)}
-              >
-                {areas.map((area) => (
-                  <option key={area.id} value={area.id}>
-                    {locale === "bn" ? area.nameBn : area.nameEn}
-                  </option>
-                ))}
-              </NativeSelect>
-            </div>
+          <div className="space-y-2">
+            <Label>{t("area")}</Label>
+            <LocationPicker
+              initialTrail={areaTrail}
+              layout="stack"
+              onChange={(id) => set("areaId", id ? String(id) : "")}
+            />
+          </div>
 
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="venue-type">{t("type")}</Label>
               <NativeSelect

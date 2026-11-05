@@ -19,6 +19,19 @@ export const phoneSchema = z
   .trim()
   .regex(/^(\+?880|0)1[3-9]\d{8}$/, { message: "auth.errorInvalidPhone" });
 
+/**
+ * Bangladeshi mobile → E.164 (`01712…` → `+8801712…`). Better Auth's phone
+ * plugin validates and stores numbers in this form, so every client call
+ * must send it — otherwise local-format numbers are rejected as invalid.
+ */
+export function toBdE164(raw: string): string {
+  const digits = raw.replace(/\D/g, "");
+  if (digits.startsWith("880")) return `+${digits}`;
+  if (digits.startsWith("01")) return `+880${digits.slice(1)}`;
+  if (digits.startsWith("1")) return `+880${digits}`;
+  return raw.trim();
+}
+
 export const otpSchema = z
   .string()
   .trim()

@@ -13,6 +13,8 @@
     "db:migrate": "node --conditions=react-server --import tsx scripts/migrate.ts",
     "db:push": "drizzle-kit push",
     "db:seed": "node --conditions=react-server --import tsx scripts/seed.ts",
+    "geo:sync": "node --conditions=react-server --import tsx scripts/sync-locations.ts",
+    "geo:build": "node scripts/build-geo-data.mjs",
     "matching": "node --conditions=react-server --import tsx scripts/run-matching.ts",
     "reminders": "node --conditions=react-server --import tsx scripts/send-reminders.ts",
     "feedback": "node --conditions=react-server --import tsx scripts/request-feedback.ts",

@@ -48,17 +48,11 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import type { LocationCrumb } from "@/lib/geo/levels";
+import { LocationPicker } from "@/components/features/locations/location-picker";
 import { SLOTS, type Slot } from "@/lib/validations";
 
 type InterestRow = { id: number; nameEn: string; nameBn: string; icon: string };
-type AreaRow = {
-  id: number;
-  nameEn: string;
-  nameBn: string;
-  zone: string;
-  zoneLabelEn: string;
-  zoneLabelBn: string;
-};
 
 type Step = "interests" | "area" | "availability" | "preferences";
 
@@ -93,8 +87,10 @@ const WEEKDAY_ORDER = [0, 1, 2, 3, 4, 5, 6] as const;
 function useErrorText() {
   const tOnboarding = useTranslations("onboarding");
   const tErrors = useTranslations("errors");
+  const tLocations = useTranslations("locations");
   return (key?: string) => {
     if (!key) return tErrors("generic");
+    if (key === "locations.pickMoreSpecific") return tLocations("pickMoreSpecific");
     if (key.startsWith("onboarding.")) return tOnboarding(key.slice("onboarding.".length));
     if (key.startsWith("errors.")) return tErrors(key.slice("errors.".length));
     return tErrors("generic");
@@ -103,7 +99,8 @@ function useErrorText() {
 
 export interface OnboardingFlowProps {
   interests: InterestRow[];
-  areas: AreaRow[];
+  /** Root-first trail of the member's saved location. */
+  areaTrail: LocationCrumb[];
   selectedInterestIds: number[];
   areaId: number | null;
   availability: { weekday: number; slot: string }[];
@@ -125,7 +122,7 @@ export interface OnboardingFlowProps {
  */
 export function OnboardingFlow({
   interests,
-  areas,
+  areaTrail,
   selectedInterestIds,
   areaId,
   availability,
@@ -274,7 +271,6 @@ export function OnboardingFlow({
   }
 
   const progress = ((stepIndex + 1) / STEPS.length) * 100;
-  const zones = [...new Map(areas.map((a) => [a.zone, a])).values()];
 
   return (
     <div className="space-y-6">
@@ -339,35 +335,10 @@ export function OnboardingFlow({
             ) : null}
 
             {step === "area" ? (
-              <div className="space-y-5">
-                {zones.map((zone) => (
-                  <div key={zone.zone} className="space-y-2">
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                      {locale === "bn" ? zone.zoneLabelBn : zone.zoneLabelEn}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {areas
-                        .filter((a) => a.zone === zone.zone)
-                        .map((area) => (
-                          <button
-                            key={area.id}
-                            type="button"
-                            onClick={() => setSelectedArea(area.id)}
-                            aria-pressed={selectedArea === area.id}
-                            className={cn(
-                              "rounded-xl border px-3.5 py-2 text-sm transition-colors",
-                              selectedArea === area.id
-                                ? "border-primary bg-primary text-primary-foreground"
-                                : "border-border bg-card hover:border-primary/40",
-                            )}
-                          >
-                            {name(area)}
-                          </button>
-                        ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <LocationPicker
+                initialTrail={areaTrail}
+                onChange={(id) => setSelectedArea(id)}
+              />
             ) : null}
 
             {step === "availability" ? (

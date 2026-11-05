@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Bell, Languages, TriangleAlert, UserCog } from "lucide-react";
 
 import { requireOnboarded } from "@/lib/session";
-import { getAreas } from "@/lib/queries/reference";
+import { getLocationTrail } from "@/lib/queries/locations";
 import { getBlockedUsers, getNotificationPrefs } from "@/lib/queries/users";
 import { PageHeader } from "@/components/features/shared/page-header";
 import { ProfileEditForm } from "@/components/features/profile/profile-edit-form";
@@ -22,10 +22,10 @@ export async function generateMetadata() {
 export default async function SettingsPage() {
   const user = await requireOnboarded();
 
-  const [t, tp, areas, prefs, blocked] = await Promise.all([
+  const [t, tp, areaTrail, prefs, blocked] = await Promise.all([
     getTranslations("settings"),
     getTranslations("profile"),
-    getAreas(),
+    getLocationTrail(user.areaId),
     getNotificationPrefs(user.id),
     getBlockedUsers(user.id),
   ]);
@@ -53,13 +53,7 @@ export default async function SettingsPage() {
           </CardHeader>
           <CardContent>
             <ProfileEditForm
-              areas={areas.map((a) => ({
-                id: a.id,
-                nameEn: a.nameEn,
-                nameBn: a.nameBn,
-                zoneLabelEn: a.zoneLabelEn,
-                zoneLabelBn: a.zoneLabelBn,
-              }))}
+              areaTrail={areaTrail}
               initial={{
                 name: user.name,
                 gender: user.gender ?? "",

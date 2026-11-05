@@ -194,8 +194,24 @@
         "afternoon": "Afternoon",
         "evening": "Evening"
       },
-      "weekdays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-      "weekdaysFull": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      "weekdays": [
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat"
+      ],
+      "weekdaysFull": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
       "error": "Pick at least one slot so we can find a time that works."
     },
     "preferences": {
@@ -682,5 +698,27 @@
     "errorTitle": "Something broke",
     "errorText": "That is on us. Try again, or come back in a minute.",
     "sessionExpired": "Your session expired. Please sign in again."
+  },
+  "locations": {
+    "searchPlaceholder": "Search any place — e.g. Gulshan 2, Savar, Agrabad",
+    "noResults": "No matching place. Try the dropdowns below.",
+    "chooseDivision": "Choose a division",
+    "any": "Any (optional)",
+    "narrowDown": "Narrow down",
+    "clear": "Clear",
+    "pickMoreSpecific": "Pick at least a district, upazila or city area.",
+    "location": "Location",
+    "anywhere": "Anywhere in Bangladesh",
+    "levels": {
+      "division": "Division",
+      "district": "District",
+      "city_corporation": "City corporation",
+      "upazila": "Upazila",
+      "thana": "Thana",
+      "ward": "Ward",
+      "union": "Union",
+      "area": "Area",
+      "village": "Village"
+    }
   }
 }

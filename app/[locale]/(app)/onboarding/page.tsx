@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 
 import { requireUser } from "@/lib/session";
 import { getUserSetup } from "@/lib/queries/users";
-import { getAreas, getInterests } from "@/lib/queries/reference";
+import { getInterests } from "@/lib/queries/reference";
+import { getLocationTrail } from "@/lib/queries/locations";
 import { PageHeader } from "@/components/features/shared/page-header";
 import { OnboardingFlow } from "@/components/features/onboarding/onboarding-flow";
 import { PhoneVerifyCard } from "@/components/features/profile/phone-verify-card";
@@ -46,10 +47,10 @@ export default async function OnboardingPage({
 
   if (user.onboardedAt) redirect("/home");
 
-  const [t, setup, areas, interests] = await Promise.all([
+  const [t, setup, areaTrail, interests] = await Promise.all([
     getTranslations("onboarding"),
     getUserSetup(user.id),
-    getAreas(),
+    getLocationTrail(user.areaId),
     getInterests(),
   ]);
 
@@ -64,14 +65,7 @@ export default async function OnboardingPage({
           nameBn: i.nameBn,
           icon: i.icon,
         }))}
-        areas={areas.map((a) => ({
-          id: a.id,
-          nameEn: a.nameEn,
-          nameBn: a.nameBn,
-          zone: a.zone,
-          zoneLabelEn: a.zoneLabelEn,
-          zoneLabelBn: a.zoneLabelBn,
-        }))}
+        areaTrail={areaTrail}
         selectedInterestIds={setup.interests.map((i) => i.id)}
         areaId={user.areaId}
         availability={setup.availability.map((a) => ({ weekday: a.weekday, slot: a.slot }))}
