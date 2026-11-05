@@ -31,13 +31,13 @@ const schema = z.object({
   NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
 
   SMS_PROVIDER: z.enum(["console", "twilio"]).default("console"),
-  SMS_FROM: z.string().default("Bondhu"),
+  SMS_FROM: z.string().default("APON"),
   TWILIO_ACCOUNT_SID: z.string().optional(),
   TWILIO_AUTH_TOKEN: z.string().optional(),
   TWILIO_FROM: z.string().optional(),
 
   RESEND_API_KEY: z.string().optional(),
-  EMAIL_FROM: z.string().default("Bondhu Circle <onboarding@resend.dev>"),
+  EMAIL_FROM: z.string().default("APON <onboarding@resend.dev>"),
 
   R2_ACCOUNT_ID: z.string().optional(),
   R2_ACCESS_KEY_ID: z.string().optional(),

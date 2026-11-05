@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { Shield } from "lucide-react";
 
+import { Logo } from "@/components/brand/logo";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { can } from "@/lib/rbac";
@@ -38,10 +39,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               className="flex items-center gap-2 text-[15px] font-semibold tracking-tight"
               aria-label={t("appName")}
             >
-              <span className="grid size-7 place-items-center rounded-lg bg-primary text-xs font-bold text-primary-foreground">
-                ব
-              </span>
-              <span className="hidden sm:inline">Bondhu Circle</span>
+              <Logo hideWordmarkOnMobile />
             </Link>
             <NavLinks isHost={isHost} />
           </div>

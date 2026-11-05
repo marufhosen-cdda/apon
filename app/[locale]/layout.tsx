@@ -37,9 +37,9 @@ export async function generateMetadata({
       template: `%s · ${t("appName")}`,
     },
     description:
-      "Bondhu Circle matches you into a small weekly circle of people near you, anywhere in Bangladesh, and gives you a reason to meet up in real life.",
+      "APON matches you into a small weekly circle of people near you, anywhere in Bangladesh, and gives you a reason to meet up in real life.",
     manifest: "/manifest.webmanifest",
-    appleWebApp: { capable: true, title: "Bondhu", statusBarStyle: "default" },
+    appleWebApp: { capable: true, title: "APON", statusBarStyle: "default" },
     icons: {
       icon: [
         { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },

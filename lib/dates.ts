@@ -1,7 +1,7 @@
 /**
  * Date helpers.
  *
- * Bondhu Circle only operates in Dhaka, so every date is rendered in
+ * APON operates in Bangladesh (a single time zone), so every date is rendered in
  * `Asia/Dhaka` regardless of where the server runs or which timezone the
  * reader is in — a meetup at 5pm must read as 5pm. `Intl` does the work
  * (including Bengali numerals for `bn`), which keeps this isomorphic: the

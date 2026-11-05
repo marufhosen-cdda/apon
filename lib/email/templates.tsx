@@ -6,11 +6,15 @@ import {
   Heading,
   Hr,
   Html,
+  Img,
   Link,
   Preview,
   Section,
   Text,
 } from "@react-email/components";
+
+/** Absolute URL: email clients cannot resolve relative image paths. */
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
 
 /**
  * Shared React Email shell. Every template renders inside `<EmailLayout>`.
@@ -32,13 +36,20 @@ export function EmailLayout({ preview, heading, children, footer }: EmailLayoutP
       <Body style={body}>
         <Container style={container}>
           <Section style={logo}>
-            <Text style={logoText}>Bondhu Circle</Text>
+            <Img
+              src={`${APP_URL}/icons/icon-192.png`}
+              width="32"
+              height="32"
+              alt="APON"
+              style={{ display: "inline-block", verticalAlign: "middle", borderRadius: 8 }}
+            />
+            <Text style={logoText}>APON</Text>
           </Section>
           <Heading style={h1}>{heading}</Heading>
           {children}
           <Hr style={hr} />
           <Text style={footerText}>
-            {footer ?? "Bondhu Circle — Find your people in Dhaka."}
+            {footer ?? "APON — Everyone belongs."}
           </Text>
         </Container>
       </Body>
@@ -98,7 +109,15 @@ const container = {
 };
 
 const logo = { marginBottom: 8 };
-const logoText = { color: "#0f766e", fontSize: 14, fontWeight: 700, letterSpacing: 1 };
+const logoText = {
+  display: "inline-block",
+  verticalAlign: "middle",
+  margin: "0 0 0 8px",
+  color: "#0f1f1c",
+  fontSize: 15,
+  fontWeight: 800,
+  letterSpacing: 3,
+};
 const h1 = { color: "#0f172a", fontSize: 22, lineHeight: "28px", margin: "8px 0 16px" };
 const p = { color: "#334155", fontSize: 15, lineHeight: "24px", margin: "0 0 16px" };
 const hr = { borderColor: "#e4e7e6", margin: "24px 0" };

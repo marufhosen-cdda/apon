@@ -1,7 +1,7 @@
 {
   "common": {
-    "appName": "Bondhu Circle",
-    "tagline": "Find your people",
+    "appName": "APON",
+    "tagline": "Everyone belongs",
     "save": "Save",
     "saved": "Saved",
     "cancel": "Cancel",
@@ -70,10 +70,10 @@
   },
   "landing": {
     "hero": {
-      "badge": "Across Bangladesh · small weekly circles",
+      "badge": "Everyone belongs · small weekly circles across Bangladesh",
       "title": "Find your people, wherever you live",
       "highlight": "your people",
-      "subtitle": "Bondhu Circle matches you into a small circle of 4–6 people who share your interests and free time — then gives you a reason to meet up every week.",
+      "subtitle": "APON matches you into a small circle of 4–6 people who share your interests and free time — then gives you a reason to meet up every week.",
       "ctaPrimary": "Join your circle",
       "ctaSecondary": "See how it works",
       "imageAlt": "Friends laughing together over coffee at a local café",
@@ -97,7 +97,7 @@
     },
     "safety": {
       "title": "Safety is the product",
-      "text": "Friendship only works when people feel safe. Every part of Bondhu is built around that.",
+      "text": "Friendship only works when people feel safe. Every part of APON is built around that.",
       "point1Title": "Verified phone numbers",
       "point1Text": "Everyone verifies a real phone number before joining an activity or a circle.",
       "point2Title": "Exact address only after RSVP",
@@ -112,7 +112,7 @@
       "q1": "What exactly is a circle?",
       "a1": "A circle is 4–6 people near you — in your neighbourhood, thana or upazila — with overlapping interests and availability. You keep the same circle for weeks, so friendships have time to become real.",
       "q2": "Is it free?",
-      "a2": "Joining Bondhu Circle is free. Some activities have a small cost (coffee, court rental) paid directly at the venue.",
+      "a2": "Joining APON is free. Some activities have a small cost (coffee, court rental) paid directly at the venue.",
       "q3": "Which places do you cover?",
       "a3": "All of Bangladesh: every division, district, upazila and union, plus all 12 city corporations down to thanas, wards and neighbourhoods like Gulshan, Dhanmondi, Agrabad or Zindabazar.",
       "q4": "What if my circle is not a fit?",
@@ -133,11 +133,11 @@
       "about": "About",
       "credits": "Photo credits",
       "rights": "Made with care in Dhaka.",
-      "note": "Bondhu Circle is a community platform for meeting people in real life — not a dating app."
+      "note": "APON is a community platform for meeting people in real life — not a dating app."
     }
   },
   "auth": {
-    "signInTitle": "Welcome to Bondhu Circle",
+    "signInTitle": "Welcome to APON",
     "signInSubtitle": "Sign in with a one-time code. No passwords, ever.",
     "emailTab": "Email",
     "phoneTab": "Phone",
@@ -257,13 +257,13 @@
       "rule1": "Show up when you say you will, or cancel early.",
       "rule2": "Treat everyone with respect — no harassment, no slurs, no romantic pressure.",
       "rule3": "Keep what is shared in the circle inside the circle.",
-      "rule4": "Meet in public places. Alcohol and illegal activity are not welcome at Bondhu meetups.",
+      "rule4": "Meet in public places. Alcohol and illegal activity are not welcome at APON meetups.",
       "rule5": "Report anything that feels off. We read every report.",
       "accept": "I have read and accept the guidelines",
       "acceptError": "Please accept the guidelines to continue."
     },
     "finish": "Finish setup",
-    "done": "All set — welcome to Bondhu Circle."
+    "done": "All set — welcome to APON."
   },
   "home": {
     "greeting": "Salam, {name}",
@@ -802,7 +802,7 @@
   },
   "access": {
     "title": "You don't have access to this page",
-    "text": "This section is for {roles} only. If you think this is a mistake, contact a Bondhu Circle admin.",
+    "text": "This section is for {roles} only. If you think this is a mistake, contact a APON admin.",
     "adminOnly": "administrators",
     "hostOnly": "hosts",
     "generic": "authorized members",

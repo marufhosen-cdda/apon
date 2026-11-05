@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 512" role="img" aria-label="APON — Everyone belongs">
+  <title>APON — Everyone belongs</title>
+  <rect width="512" height="512" rx="118" fill="#0f766e"/>
+  <g transform="translate(256 256) scale(0.88) translate(-256 -256)">
+    <path d="M400.77 225.23A148 148 0 1 1 261.17 108.09" fill="none" stroke="#ffffff" stroke-width="58" stroke-linecap="round"/>
+    <circle cx="351.13" cy="142.63" r="46" fill="#fbbf24"/>
+  </g>
+  <text x="600" y="318" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="230" font-weight="800" letter-spacing="10" fill="#0f1f1c">APON</text>
+  <text x="606" y="418" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="64" font-weight="500" letter-spacing="4" fill="#5a6a66">Everyone belongs</text>
+</svg>
