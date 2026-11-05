@@ -9,18 +9,27 @@ import { applyToHost } from "@/lib/actions/host";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { FileUpload } from "@/components/features/uploads/file-upload";
 
 /** Applications are reviewed by a human admin. */
 export function HostApplicationForm() {
   const t = useTranslations("host.apply");
   const tc = useTranslations("common");
+  const tu = useTranslations("uploads");
   const te = useTranslations("errors");
 
   const [state, formAction, pending] = useActionState(
     async (_prev: unknown, formData: FormData) => {
       const result = await applyToHost(undefined, formData);
       if (result.ok) toast.success(t("pending"));
-      else toast.error(result.error.startsWith("host.") ? t("alreadyApproved") : te("generic"));
+      else
+        toast.error(
+          result.error.startsWith("host.")
+            ? t("alreadyApproved")
+            : result.error.startsWith("uploads.errors.")
+              ? tu(result.error.replace("uploads.", "") as "errors.notYours")
+              : te("generic"),
+        );
       return result;
     },
     { ok: false as const, error: "" },
@@ -53,6 +62,8 @@ export function HostApplicationForm() {
           placeholder={t("experiencePlaceholder")}
         />
       </div>
+
+      <FileUpload purpose="host_document" name="attachmentUploadId" label={tu("attach")} />
 
       <Button type="submit" disabled={pending} size="lg">
         {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Send aria-hidden />}

@@ -47,4 +47,5 @@ export const RATE_LIMITS = {
   report: { max: 5, windowSec: 600 },
   feedback: { max: 10, windowSec: 600 },
   circleRequest: { max: 3, windowSec: 3600 },
+  upload: { max: 20, windowSec: 600 },
 } as const;

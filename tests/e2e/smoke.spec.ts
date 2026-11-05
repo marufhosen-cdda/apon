@@ -226,7 +226,14 @@ test.describe("member journey", () => {
 
     // Step 1 — interests (3–8).
     const chips = page.locator('main button[aria-pressed]');
-    for (let index = 0; index < 3; index += 1) await chips.nth(index).click();
+    for (let index = 0; index < 3; index += 1) {
+      const chip = chips.nth(index);
+      // Retry until the click lands after hydration (a cold dev compile can be slow).
+      await expect(async () => {
+        if ((await chip.getAttribute("aria-pressed")) !== "true") await chip.click();
+        await expect(chip).toHaveAttribute("aria-pressed", "true", { timeout: 1_000 });
+      }).toPass({ timeout: 20_000 });
+    }
     await page.getByRole("button", { name: "Next", exact: true }).click();
 
     // Step 2 — location: search the nationwide tree, then narrow with the cascade.

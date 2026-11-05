@@ -8,6 +8,7 @@ import { z } from "zod";
 import { type ActionContext, createAction } from "@/lib/actions/action";
 import { db } from "@/lib/db";
 import { assertSelectableLocation } from "@/lib/queries/locations";
+import { resolveOwnedImage } from "@/lib/uploads/server";
 import { availability, preferences, userInterests, users } from "@/lib/db/schema";
 import {
   areaStepSchema,
@@ -82,6 +83,7 @@ export const completeOnboarding = createAction({
   schema: preferencesStepSchema.and(guidelinesStepSchema),
   handler: async (input, { user }: ActionContext) => {
     const now = new Date();
+    const avatarUrl = await resolveOwnedImage(user.id, input.avatarUrl, "avatar", user.avatarUrl);
     await db.transaction(async (tx) => {
       await tx
         .insert(preferences)
@@ -107,7 +109,7 @@ export const completeOnboarding = createAction({
         .update(users)
         .set({
           bio: input.bio || null,
-          avatarUrl: input.avatarUrl || null,
+          avatarUrl,
           onboardedAt: now,
           guidelinesAcceptedAt: now,
           updatedAt: now,

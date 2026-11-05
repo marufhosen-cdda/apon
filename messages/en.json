@@ -327,7 +327,7 @@
       "languageBoth": "Mix of both",
       "bio": "Short intro",
       "bioPlaceholder": "A line or two about you — what you are looking for, what you enjoy.",
-      "avatar": "Avatar URL (optional)"
+      "avatar": "Profile photo (optional)"
     },
     "phone": {
       "title": "Verify your phone number",
@@ -541,7 +541,7 @@
       "cost": "Cost per person (BDT)",
       "costHint": "Paid at the venue. Enter 0 for free.",
       "womenOnly": "Women only",
-      "image": "Cover image URL",
+      "image": "Cover image",
       "submit": "Submit for approval",
       "submitUpdate": "Save changes",
       "created": "Activity submitted for approval.",
@@ -574,7 +574,7 @@
     "genderOther": "Other",
     "birthYear": "Birth year",
     "areaLabel": "Neighbourhood",
-    "avatarUrl": "Avatar URL",
+    "avatarUrl": "Profile photo",
     "bioLabel": "Short intro",
     "saved": "Profile updated.",
     "report": "Report profile",
@@ -776,7 +776,8 @@
         "sports": "Sports",
         "coworking": "Coworking",
         "other": "Other"
-      }
+      },
+      "photo": "Photo"
     },
     "circles": {
       "title": "Circles",
@@ -937,6 +938,33 @@
         "For your security, every device is signed out after a reset"
       ],
       "note": "APON staff will never ask for your password or a code."
+    }
+  },
+  "uploads": {
+    "choose": "Upload image",
+    "replace": "Replace",
+    "remove": "Remove",
+    "dropHint": "or drag and drop here",
+    "uploading": "Uploading…",
+    "imageLimits": "JPG, PNG or WebP · up to {size}",
+    "fileLimits": "JPG, PNG, WebP or PDF · up to {size}",
+    "attach": "Attach a file",
+    "attached": "Attached",
+    "privateNote": "Only APON admins can see this file.",
+    "disabled": "Uploads aren't configured on this server yet.",
+    "uploaded": "Uploaded",
+    "view": "View attachment",
+    "linkExpires": "Link expires in 10 minutes",
+    "noAttachment": "No attachment",
+    "errors": {
+      "empty": "That file is empty.",
+      "tooLarge": "That file is too large (max {size}).",
+      "type": "That file type isn't allowed. Use {types}.",
+      "failed": "Upload failed. Please try again.",
+      "disabled": "Uploads aren't configured on this server yet.",
+      "notYours": "That file can't be used here — please upload it again.",
+      "rateLimited": "Too many uploads. Please wait a few minutes.",
+      "generic": "Something went wrong. Please try again."
     }
   }
 }

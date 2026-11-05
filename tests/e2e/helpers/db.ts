@@ -29,7 +29,10 @@ if (!process.env.DATABASE_URL) {
   throw new Error("tests/e2e needs DATABASE_URL (set it in .env or the environment)");
 }
 
-export const sql = postgres(process.env.DATABASE_URL, { max: 2 });
+const connect = () => postgres(process.env.DATABASE_URL!, { max: 2 });
+
+/** Shared pool (an ESM live binding, so `closeDb` can swap it). */
+export let sql = connect();
 
 /** Latest OTP for an email address or phone number. */
 export async function readOtp(fragment: string): Promise<string> {
@@ -80,6 +83,12 @@ export async function activityAddress(activityId: number): Promise<string | null
   return rows[0]?.address ?? null;
 }
 
+/**
+ * Close the pool after a spec file. Spec files share this module in one
+ * worker, so a fresh (lazily connecting) pool replaces it for the next file.
+ */
 export async function closeDb() {
-  await sql.end({ timeout: 5 });
+  const old = sql;
+  sql = connect();
+  await old.end({ timeout: 5 });
 }

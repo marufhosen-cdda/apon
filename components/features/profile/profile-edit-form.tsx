@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
 import { LocationPicker } from "@/components/features/locations/location-picker";
+import { ImageUpload } from "@/components/features/uploads/image-upload";
 import type { LocationCrumb } from "@/lib/geo/levels";
 
 
@@ -121,16 +122,13 @@ export function ProfileEditForm({
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="avatar">{t("avatarUrl")}</Label>
-        <Input
-          id="avatar"
-          type="url"
-          value={values.avatarUrl}
-          placeholder="https://…"
-          onChange={(e) => set("avatarUrl", e.target.value)}
-        />
-      </div>
+      <ImageUpload
+        purpose="avatar"
+        shape="circle"
+        label={t("avatarUrl")}
+        value={values.avatarUrl}
+        onChange={(url) => set("avatarUrl", url)}
+      />
 
       <Button onClick={save} disabled={pending}>
         {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Save aria-hidden />}

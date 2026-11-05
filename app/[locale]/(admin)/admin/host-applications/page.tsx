@@ -1,3 +1,5 @@
+import { getAttachmentLinks } from "@/lib/uploads/server";
+import { AttachmentLink } from "@/components/features/uploads/attachment-link";
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
@@ -31,6 +33,7 @@ export default async function AdminHostApplicationsPage({
     getTranslations("host.status"),
     listHostApplications(active),
   ]);
+  const attachments = await getAttachmentLinks(rows.map((r) => r.application.attachmentUploadId));
 
   return (
     <div className="space-y-5">
@@ -96,6 +99,10 @@ export default async function AdminHostApplicationsPage({
                       {row.application.experience}
                     </p>
                   </div>
+                ) : null}
+
+                {row.application.attachmentUploadId ? (
+                  <AttachmentLink attachment={attachments.get(row.application.attachmentUploadId)} />
                 ) : null}
 
                 {row.application.status === "pending" ? (

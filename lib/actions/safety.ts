@@ -8,6 +8,7 @@ import { ActionError, type ActionContext, createAction } from "@/lib/actions/act
 import { db } from "@/lib/db";
 import { blocks, reports, users } from "@/lib/db/schema";
 import { blockSchema, reportSchema } from "@/lib/validations";
+import { resolveOwnedAttachment } from "@/lib/uploads/server";
 
 /**
  * Report a user, activity or message.
@@ -38,6 +39,7 @@ export const reportAction = createAction({
       .limit(1);
 
     if (existing.length) throw new ActionError("safety.report.already");
+    const attachmentUploadId = await resolveOwnedAttachment(user.id, input.attachmentUploadId, "report_evidence");
 
     const rows = await db
       .insert(reports)
@@ -47,6 +49,7 @@ export const reportAction = createAction({
         targetId: input.targetId,
         reason: input.reason,
         details: input.details || null,
+        attachmentUploadId,
       })
       .returning();
 

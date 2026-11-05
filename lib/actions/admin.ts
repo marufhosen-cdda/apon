@@ -7,6 +7,7 @@ import { eq, sql } from "drizzle-orm";
 import { ActionError, type ActionContext, createAction } from "@/lib/actions/action";
 import { db } from "@/lib/db";
 import { assertSelectableLocation } from "@/lib/queries/locations";
+import { cleanupReplacedImage, resolveOwnedImage } from "@/lib/uploads/server";
 import {
   activities,
   hostApplications,
@@ -202,13 +203,18 @@ export const saveVenue = createAction({
   schema: venueSchema,
   authorize: "admin",
   revalidate: ["/admin/venues", "/admin"],
-  handler: async (input) => {
+  handler: async (input, { user }: ActionContext) => {
     await assertSelectableLocation(input.areaId);
+    const existing = input.id
+      ? (await db.select({ imageUrl: venues.imageUrl }).from(venues).where(eq(venues.id, input.id)).limit(1))[0]
+      : undefined;
+    const imageUrl = await resolveOwnedImage(user.id, input.imageUrl, "venue_photo", existing?.imageUrl);
     const values = {
       name: input.name,
       areaId: input.areaId,
       address: input.address,
       mapUrl: input.mapUrl || null,
+      imageUrl,
       type: input.type,
       isPublic: input.isPublic,
       approved: input.approved,
@@ -221,6 +227,7 @@ export const saveVenue = createAction({
         .set(values)
         .where(eq(venues.id, input.id))
         .returning({ id: venues.id });
+      await cleanupReplacedImage(existing?.imageUrl, imageUrl);
       return { id: rows[0]?.id ?? input.id };
     }
 
