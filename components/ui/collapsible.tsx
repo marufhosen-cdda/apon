@@ -27,7 +27,7 @@ export function Disclosure({
         <button
           type="button"
           aria-expanded={open}
-          className="flex w-full items-center justify-between gap-4 py-4 text-left text-sm font-medium transition-colors hover:text-primary sm:text-base"
+          className="flex w-full items-center justify-between gap-4 py-3.5 text-left text-sm font-medium transition-colors hover:text-primary sm:text-[15px]"
         >
           {question}
           <ChevronDown

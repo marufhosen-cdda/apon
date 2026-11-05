@@ -73,8 +73,8 @@ function SectionHeading({
       {eyebrow ? (
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">{eyebrow}</p>
       ) : null}
-      <h2 className="mt-2 text-balance text-2xl font-semibold tracking-tight sm:text-3xl lg:text-[2.1rem]">{title}</h2>
-      {subtitle ? <p className="mt-3 text-pretty text-muted-foreground sm:text-[15px]">{subtitle}</p> : null}
+      <h2 className="mt-1.5 text-balance text-xl font-semibold tracking-tight sm:text-2xl lg:text-[1.75rem]">{title}</h2>
+      {subtitle ? <p className="mt-2 text-pretty text-sm text-muted-foreground sm:text-[15px]">{subtitle}</p> : null}
     </FadeUp>
   );
 }
@@ -153,13 +153,13 @@ export default async function LandingPage() {
           aria-hidden
           className="pointer-events-none absolute -bottom-48 left-[-15%] size-[520px] rounded-full bg-amber-300/15 blur-3xl"
         />
-        <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-4 pb-16 pt-12 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:pb-24 lg:pt-20">
+        <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-4 pb-10 pt-8 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-12 lg:pb-14 lg:pt-12">
           <FadeUp>
             <p className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
               <LogoMark className="size-4" />
               {t("hero.badge")}
             </p>
-            <h1 className="mt-5 text-balance text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.35rem]">
+            <h1 className="mt-4 text-balance text-[2rem] font-semibold leading-[1.1] tracking-tight sm:text-[2.6rem] lg:text-[3rem]">
               {t("hero.titleBefore")}
               <span className="relative whitespace-nowrap text-primary">
                 {t("hero.highlight")}
@@ -174,11 +174,11 @@ export default async function LandingPage() {
               </span>
               {t("hero.titleAfter")}
             </h1>
-            <p className="mt-6 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <p className="mt-4 max-w-xl text-pretty text-[15px] leading-relaxed text-muted-foreground sm:text-base">
               {t("hero.subtitle")}
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               <Button size="lg" asChild className="h-11 px-6 text-[15px]">
                 <Link href="/sign-up">
                   {t("hero.ctaPrimary")} <ArrowRight aria-hidden />
@@ -190,7 +190,7 @@ export default async function LandingPage() {
             </div>
             <p className="mt-3 text-xs text-muted-foreground">{t("hero.note")}</p>
 
-            <ul className="mt-8 grid max-w-lg grid-cols-3 gap-3 border-t border-border pt-6 text-sm">
+            <ul className="mt-6 grid max-w-lg grid-cols-3 gap-3 border-t border-border pt-4 text-sm">
               {[
                 { icon: Users, text: t("hero.stat1") },
                 { icon: CalendarHeart, text: t("hero.stat2") },
@@ -206,7 +206,7 @@ export default async function LandingPage() {
 
           {/* Visual: photo + floating product cards */}
           <FadeUp delay={0.12} className="relative mx-auto w-full max-w-lg lg:max-w-none">
-            <div className="relative aspect-[4/3.4] overflow-hidden rounded-[28px] border border-border bg-gradient-to-br from-primary/30 via-primary/10 to-amber-100 shadow-xl shadow-primary/10">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/30 via-primary/10 to-amber-100 shadow-xl shadow-primary/10">
               <Image
                 src={images.hero.src}
                 alt={t("hero.imageAlt")}
@@ -266,7 +266,7 @@ export default async function LandingPage() {
       <section aria-label={t("stats.title")} className="border-y border-border bg-card">
         <div className="mx-auto grid w-full max-w-6xl grid-cols-2 divide-border px-4 sm:px-6 lg:grid-cols-4 lg:divide-x">
           {statTiles.map((s) => (
-            <div key={s.label} className="flex items-center gap-3 px-2 py-6 lg:justify-center lg:px-6">
+            <div key={s.label} className="flex items-center gap-3 px-2 py-4 lg:justify-center lg:px-6">
               <span className="grid size-10 place-items-center rounded-xl bg-primary/10 text-primary">
                 <s.icon className="size-5" aria-hidden />
               </span>
@@ -281,16 +281,16 @@ export default async function LandingPage() {
       </section>
 
       {/* -------------------------------------------------------------- Why */}
-      <section className="py-16 sm:py-24">
+      <section className="py-10 sm:py-14">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
           <SectionHeading eyebrow={t("why.eyebrow")} title={t("why.title")} subtitle={t("why.subtitle")} />
-          <Stagger className="mt-10 grid gap-4 sm:grid-cols-3">
+          <Stagger className="mt-6 grid gap-3 sm:grid-cols-3">
             {why.map((card) => (
-              <StaggerItem key={card.key} className="rounded-2xl border border-border bg-card p-6 shadow-xs">
+              <StaggerItem key={card.key} className="rounded-2xl border border-border bg-card p-5 shadow-xs">
                 <span className="grid size-10 place-items-center rounded-xl bg-amber-100 text-amber-700 dark:bg-amber-400/15 dark:text-amber-300">
                   <card.icon className="size-5" aria-hidden />
                 </span>
-                <h3 className="mt-4 font-semibold">{t(`why.${card.key}Title`)}</h3>
+                <h3 className="mt-3 font-semibold">{t(`why.${card.key}Title`)}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{t(`why.${card.key}Text`)}</p>
               </StaggerItem>
             ))}
@@ -299,13 +299,13 @@ export default async function LandingPage() {
       </section>
 
       {/* ------------------------------------------------------- How it works */}
-      <section id="how" className="scroll-mt-20 border-t border-border bg-card/60 py-16 sm:py-24">
+      <section id="how" className="scroll-mt-20 border-t border-border bg-card/60 py-10 sm:py-14">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
           <SectionHeading title={t("how.title")} subtitle={t("how.subtitle")} />
-          <Stagger className="mt-12 grid gap-6 md:grid-cols-3">
+          <Stagger className="mt-6 grid gap-4 md:grid-cols-3">
             {steps.map((step, i) => (
               <StaggerItem key={step.key} className="group overflow-hidden rounded-2xl border border-border bg-background shadow-xs">
-                <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-primary/25 to-muted">
+                <div className="relative aspect-[2/1] overflow-hidden bg-gradient-to-br from-primary/25 to-muted">
                   <Image
                     src={step.image.src}
                     alt={step.image.alt}
@@ -322,7 +322,7 @@ export default async function LandingPage() {
                     {t(`how.${step.key}Time`)}
                   </span>
                 </div>
-                <div className="p-5">
+                <div className="p-4">
                   <h3 className="flex items-center gap-2 font-semibold">
                     <step.icon className="size-4 text-primary" aria-hidden />
                     {t(`how.${step.key}Title`)}
@@ -334,9 +334,9 @@ export default async function LandingPage() {
           </Stagger>
 
           {/* A week in your circle */}
-          <div className="mt-16 rounded-3xl border border-border bg-background p-6 shadow-xs sm:p-10">
+          <div className="mt-8 rounded-2xl border border-border bg-background p-5 shadow-xs sm:p-7">
             <SectionHeading title={t("week.title")} subtitle={t("week.subtitle")} align="left" />
-            <ol className="relative mt-8 grid gap-6 md:grid-cols-4">
+            <ol className="relative mt-6 grid gap-5 md:grid-cols-4">
               <span aria-hidden className="absolute left-5 top-5 hidden h-0.5 w-[calc(100%-2.5rem)] bg-gradient-to-r from-primary via-primary/50 to-amber-400 md:block" />
               {week.map((day) => (
                 <li key={day.key} className="relative flex gap-4 md:flex-col md:gap-3">
@@ -356,10 +356,10 @@ export default async function LandingPage() {
       </section>
 
       {/* ---------------------------------------------------------- Features */}
-      <section className="py-16 sm:py-24">
+      <section className="py-10 sm:py-14">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
           <SectionHeading title={t("features.title")} subtitle={t("features.subtitle")} />
-          <Stagger className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Stagger className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <StaggerItem key={f.key} className="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-xs transition-colors hover:border-primary/40">
                 <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
@@ -376,7 +376,7 @@ export default async function LandingPage() {
       </section>
 
       {/* ------------------------------------------- Activities + categories */}
-      <section id="categories" className="scroll-mt-20 border-t border-border bg-card/60 py-16 sm:py-24">
+      <section id="categories" className="scroll-mt-20 border-t border-border bg-card/60 py-10 sm:py-14">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <SectionHeading title={t("activities.title")} subtitle={t("activities.subtitle")} align="left" />
@@ -388,7 +388,7 @@ export default async function LandingPage() {
           </div>
 
           {preview.length ? (
-            <Stagger className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Stagger className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {preview.map((activity) => (
                 <StaggerItem key={activity.id}>
                   <ActivityCard
@@ -407,19 +407,19 @@ export default async function LandingPage() {
               ))}
             </Stagger>
           ) : (
-            <p className="mt-8 rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+            <p className="mt-6 rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
               {t("activities.empty")}
             </p>
           )}
 
-          <div className="mt-14">
+          <div className="mt-10">
             <SectionHeading title={t("categories.title")} subtitle={t("categories.subtitle")} />
-            <Stagger className="mt-8 flex flex-wrap justify-center gap-2.5">
+            <Stagger className="mt-5 flex flex-wrap justify-center gap-2">
               {interests.map((interest) => {
                 const Icon = interestIcon(interest.icon);
                 return (
                   <StaggerItem key={interest.id}>
-                    <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium shadow-xs transition-colors hover:border-primary/40 hover:bg-accent">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-sm font-medium shadow-xs transition-colors hover:border-primary/40 hover:bg-accent">
                       <Icon className="size-4 text-primary" aria-hidden />
                       {name(interest)}
                     </span>
@@ -432,18 +432,18 @@ export default async function LandingPage() {
       </section>
 
       {/* ---------------------------------------------------------- Coverage */}
-      <section className="py-16 sm:py-24">
-        <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr]">
+      <section className="py-10 sm:py-14">
+        <div className="mx-auto grid w-full max-w-6xl items-center gap-6 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr] lg:gap-10">
           <div>
             <SectionHeading title={t("coverage.title")} subtitle={t("coverage.subtitle")} align="left" />
-            <p className="mt-5 flex items-start gap-2 text-sm text-muted-foreground">
+            <p className="mt-4 flex items-start gap-2 text-sm text-muted-foreground">
               <Building2 className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
               {t("coverage.footnote", { places: num(stats.places, locale) })}
             </p>
           </div>
           <Stagger className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {divisions.map((d) => (
-              <StaggerItem key={d.id} className="rounded-2xl border border-border bg-card p-4 shadow-xs">
+              <StaggerItem key={d.id} className="rounded-xl border border-border bg-card p-3 shadow-xs">
                 <MapPin className="size-4 text-primary" aria-hidden />
                 <p className="mt-2 font-semibold">{name(d)}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">{t("coverage.districts", { count: num(d.districts, locale) })}</p>
@@ -455,10 +455,10 @@ export default async function LandingPage() {
       </section>
 
       {/* ----------------------------------------------------------- Safety */}
-      <section id="safety" className="scroll-mt-20 border-t border-border bg-card/60 py-16 sm:py-24">
-        <div className="mx-auto grid w-full max-w-6xl items-start gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr]">
+      <section id="safety" className="scroll-mt-20 border-t border-border bg-card/60 py-10 sm:py-14">
+        <div className="mx-auto grid w-full max-w-6xl items-start gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10">
           <FadeUp className="relative lg:sticky lg:top-24">
-            <div className="relative aspect-[4/3.6] overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/30 to-muted">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/30 to-muted">
               <Image
                 src={images.safety.src}
                 alt={images.safety.alt}
@@ -477,11 +477,11 @@ export default async function LandingPage() {
 
           <div>
             <SectionHeading title={t("safety.title")} align="left" />
-            <Stagger className="mt-8 grid gap-4 sm:grid-cols-2">
+            <Stagger className="mt-5 grid gap-3 sm:grid-cols-2">
               {safety.map((point) => (
-                <StaggerItem key={point.key} className="rounded-2xl border border-border bg-background p-5 shadow-xs">
+                <StaggerItem key={point.key} className="rounded-xl border border-border bg-background p-4 shadow-xs">
                   <point.icon className="size-5 text-primary" aria-hidden />
-                  <h3 className="mt-3 text-sm font-semibold">{t(`safety.${point.key}Title`)}</h3>
+                  <h3 className="mt-2 text-sm font-semibold">{t(`safety.${point.key}Title`)}</h3>
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t(`safety.${point.key}Text`)}</p>
                 </StaggerItem>
               ))}
@@ -491,14 +491,14 @@ export default async function LandingPage() {
       </section>
 
       {/* ------------------------------------------------------------- Host */}
-      <section className="py-16 sm:py-24">
+      <section className="py-10 sm:py-14">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <FadeUp className="grid items-center gap-8 overflow-hidden rounded-3xl bg-[#0b3a35] p-8 text-white sm:p-12 lg:grid-cols-[1.3fr_1fr]">
+          <FadeUp className="grid items-center gap-6 overflow-hidden rounded-3xl bg-[#0b3a35] p-6 text-white sm:p-9 lg:grid-cols-[1.3fr_1fr]">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-300">{t("host.eyebrow")}</p>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{t("host.title")}</h2>
               <p className="mt-3 max-w-xl text-white/80">{t("host.text")}</p>
-              <ul className="mt-6 space-y-2.5">
+              <ul className="mt-4 space-y-2">
                 {(["point1", "point2", "point3"] as const).map((p) => (
                   <li key={p} className="flex items-start gap-2.5 text-sm text-white/90">
                     <Check className="mt-0.5 size-4 shrink-0 text-amber-300" aria-hidden />
@@ -506,13 +506,13 @@ export default async function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <Button asChild className="mt-7 bg-amber-400 text-[#0b3a35] hover:bg-amber-300">
+              <Button asChild className="mt-5 bg-amber-400 text-[#0b3a35] hover:bg-amber-300">
                 <Link href="/sign-up?next=/host">
                   <Mic2 aria-hidden /> {t("host.cta")}
                 </Link>
               </Button>
             </div>
-            <div className="relative hidden aspect-square overflow-hidden rounded-2xl bg-white/10 lg:block">
+            <div className="relative hidden aspect-[4/3] overflow-hidden rounded-2xl bg-white/10 lg:block">
               <Image
                 src={images.howItWorks.meet.src}
                 alt={images.howItWorks.meet.alt}
@@ -528,13 +528,18 @@ export default async function LandingPage() {
       </section>
 
       {/* --------------------------------------------------------------- FAQ */}
-      <section id="faq" className="scroll-mt-20 border-t border-border bg-card/60 py-16 sm:py-24">
-        <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
+      <section id="faq" className="scroll-mt-20 border-t border-border bg-card/60 py-10 sm:py-14">
+        <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
           <SectionHeading title={t("faq.title")} />
-          <FadeUp delay={0.08} className="mt-8">
-            <div className="rounded-2xl border border-border bg-background px-5 shadow-xs sm:px-6">
-              {faqs.map((faq) => (
-                <Disclosure key={faq.question} question={faq.question} answer={faq.answer} />
+          <FadeUp delay={0.08} className="mt-6">
+            {/* Two columns on wide screens keeps the section short. */}
+            <div className="grid items-start gap-3 lg:grid-cols-2">
+              {[faqs.slice(0, 4), faqs.slice(4)].map((column, i) => (
+                <div key={i} className="rounded-2xl border border-border bg-background px-5 shadow-xs [&>*:last-child]:border-b-0">
+                  {column.map((faq) => (
+                    <Disclosure key={faq.question} question={faq.question} answer={faq.answer} />
+                  ))}
+                </div>
               ))}
             </div>
             <p className="mt-4 text-center text-sm text-muted-foreground">
@@ -547,7 +552,7 @@ export default async function LandingPage() {
       </section>
 
       {/* --------------------------------------------------------------- CTA */}
-      <section className="py-16 sm:py-20">
+      <section className="py-10 sm:py-12">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
           <div className="relative overflow-hidden rounded-3xl border border-border bg-primary/10">
             <Image
@@ -560,12 +565,12 @@ export default async function LandingPage() {
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/30" />
-            <div className="relative px-6 py-14 sm:px-12 sm:py-16">
+            <div className="relative px-6 py-9 sm:px-10 sm:py-11">
               <FadeUp className="max-w-lg">
-                <LogoMark className="size-10" />
-                <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">{t("cta.title")}</h2>
+                <LogoMark className="size-9" />
+                <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">{t("cta.title")}</h2>
                 <p className="mt-3 text-muted-foreground">{t("cta.text")}</p>
-                <div className="mt-7 flex flex-wrap gap-3">
+                <div className="mt-5 flex flex-wrap gap-3">
                   <Button size="lg" asChild className="h-11 px-6">
                     <Link href="/sign-up">
                       {t("cta.button")} <ArrowRight aria-hidden />
