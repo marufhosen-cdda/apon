@@ -62,7 +62,7 @@ export default async function MarketingLayout({
       </main>
 
       <footer className="border-t border-border bg-card">
-        <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
+        <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-8 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
           <div>
             <Logo tagline={tc("tagline")} markClassName="size-8" />
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
