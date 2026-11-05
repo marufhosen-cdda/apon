@@ -123,13 +123,13 @@ export function VenueForm({
         </Button>
       </DialogTrigger>
 
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className="gap-0 p-0 sm:max-w-2xl">
+        <DialogHeader className="border-b border-border px-5 py-4">
           <DialogTitle>{mode === "create" ? t("create") : t("edit")}</DialogTitle>
-          <DialogDescription>{t("address")}</DialogDescription>
+          <DialogDescription>{t("formHint")}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="space-y-4 px-5 py-4">
           <div className="space-y-2">
             <Label htmlFor="venue-name">{t("name")}</Label>
             <Input
@@ -144,12 +144,12 @@ export function VenueForm({
             <Label>{t("area")}</Label>
             <LocationPicker
               initialTrail={areaTrail}
-              layout="stack"
+              layout="grid"
               onChange={(id) => set("areaId", id ? String(id) : "")}
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-[180px_minmax(0,1fr)]">
             <div className="space-y-2">
               <Label htmlFor="venue-type">{t("type")}</Label>
               <NativeSelect
@@ -164,6 +164,16 @@ export function VenueForm({
                 ))}
               </NativeSelect>
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="venue-map">{t("mapUrl")}</Label>
+              <Input
+                id="venue-map"
+                type="url"
+                value={values.mapUrl}
+                placeholder="https://maps.google.com/…"
+                onChange={(e) => set("mapUrl", e.target.value)}
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -173,17 +183,6 @@ export function VenueForm({
               value={values.address}
               maxLength={300}
               onChange={(e) => set("address", e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="venue-map">{t("mapUrl")}</Label>
-            <Input
-              id="venue-map"
-              type="url"
-              value={values.mapUrl}
-              placeholder="https://maps.google.com/…"
-              onChange={(e) => set("mapUrl", e.target.value)}
             />
           </div>
 
@@ -214,7 +213,7 @@ export function VenueForm({
           </div>
         </div>
 
-        <DialogFooter className="sm:justify-between">
+        <DialogFooter className="sticky bottom-0 border-t border-border bg-card px-5 py-3 sm:justify-between">
           {values.id ? (
             <Button type="button" variant="destructive" onClick={remove} disabled={pending}>
               <Trash2 aria-hidden />

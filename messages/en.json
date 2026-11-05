@@ -874,7 +874,8 @@
         "coworking": "Coworking",
         "other": "Other"
       },
-      "photo": "Photo"
+      "photo": "Photo",
+      "formHint": "Venues are where hosts run activities. Only approved, public venues can be booked."
     },
     "circles": {
       "title": "Circles",
@@ -888,7 +889,42 @@
       "noPool": "No eligible members to match right now.",
       "empty": "No circles yet.",
       "formAction": "Open",
-      "request": "Rematch requests"
+      "request": "Rematch requests",
+      "back": "All circles",
+      "status": "Status",
+      "statusForming": "Forming",
+      "statusActive": "Active",
+      "statusArchived": "Archived",
+      "womenOnly": "Women only",
+      "matchedOn": "Matched",
+      "createdBy": "Created by",
+      "system": "Weekly matching",
+      "members": "Members",
+      "activeMembers": "{count} active",
+      "member": "Member",
+      "area": "Area",
+      "memberStatus": "Status",
+      "joined": "Joined",
+      "noMembers": "No members yet.",
+      "upcoming": "Upcoming meetups",
+      "noUpcoming": "No meetups scheduled.",
+      "poll": "Latest time poll",
+      "noPoll": "No time poll yet.",
+      "votes": "{count, plural, one {# vote} other {# votes}}",
+      "chat": "Chat activity",
+      "messages": "Messages",
+      "hidden": "Hidden by moderators",
+      "lastMessage": "Last message",
+      "never": "—",
+      "privacy": "Message contents are private to members. Reported messages appear in Reports.",
+      "viewProfile": "View profile",
+      "notFound": "Circle not found.",
+      "memberStatuses": {
+        "active": "Active",
+        "invited": "Invited",
+        "left": "Left",
+        "declined": "Declined"
+      }
     },
     "metrics": {
       "title": "Metrics",
