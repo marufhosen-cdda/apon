@@ -112,7 +112,7 @@ export default async function AdminCircleDetailPage({ params }: { params: Promis
                         <Badge variant={STATUS_VARIANT[membership.status as keyof typeof STATUS_VARIANT] ?? "outline"}>
                           {t(`memberStatuses.${membership.status}` as "memberStatuses.active")}
                         </Badge>
-                        {user.status === "suspended" ? <Badge variant="destructive">suspended</Badge> : null}
+                        {user.status === "suspended" ? <Badge variant="destructive">{t("suspended")}</Badge> : null}
                       </div>
                     </TableCell>
                     <TableCell className="tabular hidden text-right text-xs text-muted-foreground md:table-cell">

@@ -79,7 +79,7 @@ export default async function AdminActivitiesPage({
                   >
                     {th(row.activity.status)}
                   </Badge>
-                  {row.activity.womenOnly ? <Badge variant="outline">women only</Badge> : null}
+                  {row.activity.womenOnly ? <Badge variant="outline">{t("womenOnly")}</Badge> : null}
                 </div>
 
                 <p className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">

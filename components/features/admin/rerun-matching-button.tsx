@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, RefreshCw } from "lucide-react";
@@ -12,7 +13,7 @@ import { Button } from "@/components/ui/button";
 /** Runs the same matching engine the weekly script uses — safe to run twice. */
 export function RerunMatchingButton() {
   const t = useTranslations("admin.circles");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -20,7 +21,7 @@ export function RerunMatchingButton() {
     startTransition(async () => {
       const result = await rerunMatching(undefined, {});
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       const { created, pool } = result.data;

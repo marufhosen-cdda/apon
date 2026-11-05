@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Check, CheckCheck, Loader2 } from "lucide-react";
@@ -29,7 +30,7 @@ export function AttendeeList({
   attendees: AttendeeRow[];
 }) {
   const t = useTranslations("activities.checkin");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const [rows, setRows] = useState(attendees);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
@@ -55,7 +56,7 @@ export function AttendeeList({
         setRows((current) =>
           current.map((r) => (r.userId === row.userId ? { ...r, checkedIn: !next } : r)),
         );
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       toast.success(t("marked"));

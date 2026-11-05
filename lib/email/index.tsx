@@ -90,7 +90,7 @@ export function sendAuthCodeEmail(input: {
         preview: bn ? "আপনার APON অ্যাকাউন্ট যাচাই করুন" : "Confirm your email to finish creating your APON account",
         heading: bn ? "আপনার ইমেইল যাচাই করুন" : "Verify your email",
         body: bn
-          ? "APON-এ স্বাগতম! অ্যাকাউন্ট তৈরি শেষ করতে নিচের কোডটি দিন। কোডটি ১০ মিনিট কার্যকর।"
+          ? "APON-এ স্বাগতম! অ্যাকাউন্ট খোলা শেষ করতে নিচের কোডটি দিন। কোডটি ১০ মিনিট পর্যন্ত কাজ করবে।"
           : "Welcome to APON! Enter the code below to finish creating your account. It is valid for 10 minutes.",
       }
     : {
@@ -98,7 +98,7 @@ export function sendAuthCodeEmail(input: {
         preview: bn ? "আপনার পাসওয়ার্ড রিসেট করুন" : "Use this code to choose a new password",
         heading: bn ? "পাসওয়ার্ড রিসেট করুন" : "Reset your password",
         body: bn
-          ? "নতুন পাসওয়ার্ড সেট করতে নিচের কোডটি দিন। কোডটি ১০ মিনিট কার্যকর। রিসেটের পর আপনার সব ডিভাইস থেকে সাইন আউট হয়ে যাবে।"
+          ? "নতুন পাসওয়ার্ড সেট করতে নিচের কোডটি দিন। কোডটি ১০ মিনিট পর্যন্ত কাজ করবে। রিসেটের পর আপনার সব ডিভাইস থেকে সাইন আউট হয়ে যাবে।"
           : "Enter the code below to choose a new password. It is valid for 10 minutes. Resetting signs you out on every device.",
       };
 
@@ -111,7 +111,7 @@ export function sendAuthCodeEmail(input: {
         <OtpCode code={input.code} />
         <EmailParagraph>
           {bn
-            ? "এই কোডটি কাউকে শেয়ার করবেন না — APON কখনো কোড চাইবে না। আপনি এটা না চাইলে ইমেইলটি উপেক্ষা করুন।"
+            ? "এই কোডটি কাউকে জানাবেন না — APON কখনো আপনার কাছে কোড চাইবে না। আপনি অনুরোধ না করে থাকলে ইমেইলটি এড়িয়ে যান।"
             : "Never share this code — APON will never ask you for it. If you didn't request it, you can ignore this email."}
         </EmailParagraph>
       </EmailLayout>
@@ -140,7 +140,7 @@ export function sendAccountExistsEmail(input: { to: string; locale: string }) {
         </EmailParagraph>
         <EmailButton href={`${appUrl()}/${bn ? "bn" : "en"}/sign-in`} label={bn ? "সাইন ইন" : "Sign in"} />
         <EmailParagraph>
-          {bn ? "আপনি না হলে এই ইমেইলটি উপেক্ষা করুন।" : "If this wasn't you, you can safely ignore this email."}
+          {bn ? "এটি আপনি না হলে ইমেইলটি নিশ্চিন্তে এড়িয়ে যান।" : "If this wasn't you, you can safely ignore this email."}
         </EmailParagraph>
       </EmailLayout>
     ),
@@ -161,12 +161,12 @@ export function sendCircleInviteEmail(input: {
       : `Your weekly circle is ready — ${input.circleName}`,
     react: (
       <EmailLayout
-        preview={bn ? "একটি নতুন সার্কেলে আপনাকে আমন্ত্রণ জানানো হয়েছে" : "You have been invited to a circle"}
+        preview={bn ? "আপনার নতুন সার্কেল অপেক্ষা করছে" : "You have been invited to a circle"}
         heading={input.circleName}
       >
         <EmailParagraph>
           {bn
-            ? `আপনার মতামত ও সময়ের ভিত্তিতে ${input.memberCount} জনের একটি ছোট সার্কেল তৈরি করা হয়েছে। প্রথমে মিলিয়ে নিন কোন দিন দেখা হবে।`
+            ? `আপনার আগ্রহ আর ফাঁকা সময় মিলিয়ে ${input.memberCount} জনের একটি ছোট সার্কেল তৈরি হয়েছে। প্রথমে সবাই মিলে ঠিক করুন, কোন দিন দেখা হবে।`
             : `A small circle of ${input.memberCount} people has been formed around your interests and availability. Start by picking the day that works for everyone.`}
         </EmailParagraph>
         <EmailButton
@@ -188,21 +188,21 @@ export function sendActivityReminderEmail(input: {
   const bn = input.locale === "bn";
   return sendEmail({
     to: input.to,
-    subject: bn ? `কালীন অনুষ্ঠান: ${input.title}` : `Tomorrow: ${input.title}`,
+    subject: bn ? `আগামীকাল: ${input.title}` : `Tomorrow: ${input.title}`,
     react: (
       <EmailLayout
         preview={input.title}
         heading={input.title}
       >
         <EmailParagraph>
-          {bn ? "আপনি যোগ দিচ্ছেন:" : "You are going:"} {input.when}
+          {bn ? "আপনি যাচ্ছেন:" : "You are going:"} {input.when}
         </EmailParagraph>
         {input.address ? (
           <EmailParagraph>
             {bn ? "ঠিকানা:" : "Address:"} {input.address}
           </EmailParagraph>
         ) : null}
-        <EmailButton href={`${appUrl()}/activities`} label={bn ? "বিস্তারিত" : "View details"} />
+        <EmailButton href={`${appUrl()}/activities`} label={bn ? "বিস্তারিত দেখুন" : "View details"} />
       </EmailLayout>
     ),
   });
@@ -218,20 +218,20 @@ export function sendWaitlistPromotionEmail(input: {
   return sendEmail({
     to: input.to,
     subject: bn
-      ? `আপনার জায়গা খালি হয়েছে — ${input.title}`
+      ? `আপনার জন্য একটি আসন খালি হয়েছে — ${input.title}`
       : `A spot opened up — ${input.title}`,
     react: (
       <EmailLayout
         preview={input.title}
-        heading={bn ? "আপনি এখন তালিকাভুক্ত!" : "You are in!"}
+        heading={bn ? "আপনার আসন নিশ্চিত!" : "You are in!"}
       >
         <EmailParagraph>
           {bn
-            ? `“${input.title}” অনুষ্ঠানে একটি জায়গা খালি হয়েছে এবং আপনি স্বয়ংক্রিয়ভাবে তালিকাভুক্ত হয়েছেন।`
+            ? `“${input.title}” আয়োজনে একটি আসন খালি হয়েছিল — অপেক্ষার তালিকা থেকে আপনার আসনটি নিশ্চিত করা হয়েছে।`
             : `A spot opened up for "${input.title}" and you have been moved from the waitlist.`}
         </EmailParagraph>
         <EmailParagraph>{input.when}</EmailParagraph>
-        <EmailButton href={`${appUrl()}/activities`} label={bn ? "দেখুন" : "View activity"} />
+        <EmailButton href={`${appUrl()}/activities`} label={bn ? "আয়োজনটি দেখুন" : "View activity"} />
       </EmailLayout>
     ),
   });
@@ -254,13 +254,13 @@ export function sendHostApprovalEmail(input: { to: string; locale: string; appro
         <EmailParagraph>
           {input.approved
             ? bn
-              ? "অভিনন্দন! এখন আপনি অনুষ্ঠান তৈরি করতে পারবেন। প্রতিটি অনুষ্ঠান অ্যাডমিনের অনুমোদনের পরে প্রকাশিত হবে।"
+              ? "অভিনন্দন! এখন থেকে আপনি নতুন আয়োজন তৈরি করতে পারবেন। প্রতিটি আয়োজন অ্যাডমিনের অনুমোদনের পর সবার জন্য প্রকাশ পাবে।"
               : "Congratulations! You can now create activities. Each activity is published after an admin approves it."
             : bn
-              ? "দুঃখিত, এই সময়ে আমরা আপনার আবেদন অনুমোদন করতে পারিনি। আপনি পরে আবার আবেদন করতে পারেন।"
+              ? "দুঃখিত, এবার আপনার আবেদনটি অনুমোদন করা গেল না। কিছুদিন পর আবার আবেদন করতে পারবেন।"
               : "Unfortunately we can't approve your application at this time. You are welcome to apply again later."}
         </EmailParagraph>
-        <EmailButton href={`${appUrl()}/host`} label={bn ? "হোস্ট পর্দা" : "Host dashboard"} />
+        <EmailButton href={`${appUrl()}/host`} label={bn ? "হোস্ট ড্যাশবোর্ড" : "Host dashboard"} />
       </EmailLayout>
     ),
   });
@@ -275,7 +275,7 @@ export function sendFeedbackRequestEmail(input: {
   const bn = input.locale === "bn";
   return sendEmail({
     to: input.to,
-    subject: bn ? "কেমন লাগল? — আপনার মতামত জানান" : "How was it? — share your feedback",
+    subject: bn ? "আড্ডা কেমন হলো? — আপনার মতামত জানান" : "How was it? — share your feedback",
     react: (
       <EmailLayout
         preview={input.title}
@@ -283,7 +283,7 @@ export function sendFeedbackRequestEmail(input: {
       >
         <EmailParagraph>
           {bn
-            ? `“${input.title}” অনুষ্ঠান শেষ হয়েছে। তিনটি প্রশ্নের উত্তর দিতে এক মিনিট সময় নিন — এটি কেউ দেখবে না।`
+            ? `“${input.title}” শেষ হয়েছে। তিনটি ছোট প্রশ্নের উত্তর দিতে এক মিনিট সময় দিন — আপনার উত্তর অন্য কেউ দেখবে না।`
             : `"${input.title}" has wrapped up. Take a minute to answer three questions — they stay private.`}
         </EmailParagraph>
         <EmailButton href={`${appUrl()}/activities`} label={bn ? "মতামত দিন" : "Give feedback"} />

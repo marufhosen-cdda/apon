@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Eye, EyeOff, Loader2, Pencil, Plus } from "lucide-react";
@@ -23,9 +24,9 @@ import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 
 function useErrorToast() {
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   return (key: string) => {
-    toast.error(key === "errors.validation" ? te("validation") : te("generic"));
+    toast.error(errorMessage(key));
   };
 }
 

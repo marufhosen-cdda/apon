@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, LogOut } from "lucide-react";
@@ -21,7 +22,7 @@ import {
 /** Leaving is always allowed — nobody is stuck in a circle they dislike. */
 export function LeaveCircleButton({ circleId }: { circleId: number }) {
   const t = useTranslations("circles");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const tc = useTranslations("common");
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -31,7 +32,7 @@ export function LeaveCircleButton({ circleId }: { circleId: number }) {
     startTransition(async () => {
       const result = await leaveCircle(undefined, { circleId });
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       toast.success(t("left"));

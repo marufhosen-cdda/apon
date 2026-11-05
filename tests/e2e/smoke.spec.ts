@@ -2,6 +2,11 @@ import { expect, test } from "@playwright/test";
 
 import { activityAddress, closeDb, findBookableActivityId, readOtp, sql } from "./helpers/db";
 
+// Sign-in is rate limited per IP; every test starts from a clean window.
+test.beforeEach(async () => {
+  await sql`delete from rate_limits`;
+});
+
 test.afterAll(async () => {
   await closeDb();
 });
@@ -114,6 +119,8 @@ test.describe("password authentication", () => {
   test("forgot password resets with an emailed code and signs out old sessions", async ({ page, browser }) => {
     const email = "nusrat@apon.app";
     const newPassword = `Reset${Date.now()}x`;
+    await sql`update accounts set password = (select password from accounts where user_id = 'seed_admin_01')
+              where user_id = 'seed_host_01' and provider_id = 'credential'`;
 
     // An existing session on another device…
     const other = await browser.newContext({ baseURL: "http://localhost:3000" });
@@ -161,6 +168,9 @@ test.describe("password authentication", () => {
 
   test("signed-in users can change their password in Settings", async ({ page }) => {
     const newPassword = `Changed${Date.now()}x`;
+    // Start from the seeded password even if an earlier run stopped half-way.
+    await sql`update accounts set password = (select password from accounts where user_id = 'seed_admin_01')
+              where user_id = 'seed_host_03' and provider_id = 'credential'`;
     await page.goto("/en/sign-in");
     await page.getByLabel("Email or username").fill("sadia@apon.app");
     await page.getByLabel("Password", { exact: true }).fill("Apon2026demo");

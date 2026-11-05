@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, Pencil, Plus, Save, Trash2 } from "lucide-react";
@@ -53,8 +54,8 @@ export function VenueForm({
   label?: string;
 }) {
   const t = useTranslations("admin.venues");
+  const errorMessage = useErrorMessage();
   const tc = useTranslations("common");
-  const te = useTranslations("errors");
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
@@ -91,7 +92,7 @@ export function VenueForm({
       });
 
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("validation") : result.error);
+        toast.error(errorMessage(result.error, "errors.validation"));
         return;
       }
       toast.success(t("saved"));
@@ -105,7 +106,7 @@ export function VenueForm({
     startTransition(async () => {
       const result = await deleteVenue(undefined, { id: values.id });
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       toast.success(t("deleted"));

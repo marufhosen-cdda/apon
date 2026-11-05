@@ -316,9 +316,17 @@ export default async function ActivityDetailPage({ params, searchParams }: Props
                   </div>
 
                   {user && activity.host.id && user.id !== activity.host.id ? (
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      <ReportButton targetType="activity" targetId={activityId} variant="outline" />
-                      <ReportButton targetType="user" targetId={activity.host.id} variant="ghost" />
+                    <div className="mt-4 border-t border-border pt-3">
+                      <p className="text-xs text-muted-foreground">{t("detail.somethingWrong")}</p>
+                      <div className="mt-1.5 flex flex-wrap gap-1">
+                        <ReportButton targetType="activity" targetId={activityId} variant="ghost" />
+                        <ReportButton
+                          targetType="user"
+                          targetId={activity.host.id}
+                          variant="ghost"
+                          label={t("detail.reportHost")}
+                        />
+                      </div>
                     </div>
                   ) : null}
                 </div>

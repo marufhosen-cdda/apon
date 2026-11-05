@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useActionState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { CheckCircle2, Clock3, Loader2, Ticket } from "lucide-react";
@@ -33,12 +34,13 @@ export function RsvpButton({
   disabledLabel,
 }: Props) {
   const t = useTranslations("activities");
+  const errorMessage = useErrorMessage();
   const tc = useTranslations("common");
   const [state, formAction, pending] = useActionState<RsvpResult | null, FormData>(
     async (_prev, formData): Promise<RsvpResult | null> => {
       const result = await rsvpAction(undefined, formData);
       if (result.ok) return result.data;
-      toast.error(result.error);
+      toast.error(errorMessage(result.error));
       return null;
     },
     null,

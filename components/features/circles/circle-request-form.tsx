@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, RefreshCw } from "lucide-react";
@@ -14,7 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 /** Ask for a different circle. The reason is private — only admins can read it. */
 export function CircleRequestForm() {
   const t = useTranslations("circles.request");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const router = useRouter();
   const [reason, setReason] = useState("");
   const [pending, startTransition] = useTransition();
@@ -23,7 +24,7 @@ export function CircleRequestForm() {
     startTransition(async () => {
       const result = await requestCircle(undefined, { reason });
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       setReason("");

@@ -1,5 +1,6 @@
 "use client";
 
+import { useErrorMessage } from "@/lib/hooks/use-error-message";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, Trash2 } from "lucide-react";
@@ -24,7 +25,7 @@ import { Label } from "@/components/ui/label";
 /** Deletion removes personal data and signs the member out for good. */
 export function DeleteAccountDialog() {
   const t = useTranslations("settings");
-  const te = useTranslations("errors");
+  const errorMessage = useErrorMessage();
   const tc = useTranslations("common");
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -40,7 +41,7 @@ export function DeleteAccountDialog() {
     startTransition(async () => {
       const result = await deleteAccount(undefined, { confirm: "DELETE" });
       if (!result.ok) {
-        toast.error(result.error.startsWith("errors.") ? te("generic") : result.error);
+        toast.error(errorMessage(result.error));
         return;
       }
       await authClient.signOut().catch(() => undefined);
