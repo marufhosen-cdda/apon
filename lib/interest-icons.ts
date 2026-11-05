@@ -1,0 +1,51 @@
+import {
+  Activity,
+  Baby,
+  Bike,
+  BookOpen,
+  Camera,
+  ChefHat,
+  Coffee,
+  Dices,
+  Dumbbell,
+  Film,
+  Footprints,
+  HandHeart,
+  HeartPulse,
+  Languages,
+  Laptop,
+  Music,
+  Palette,
+  Plane,
+  Sparkles,
+  Trophy,
+  Utensils,
+  type LucideIcon,
+} from "lucide-react";
+
+/** Interest icons are stored as slugs in the database (`interests.icon`). */
+export const INTEREST_ICONS: Record<string, LucideIcon> = {
+  coffee: Coffee,
+  "book-open": BookOpen,
+  footprints: Footprints,
+  activity: Activity,
+  trophy: Trophy,
+  utensils: Utensils,
+  music: Music,
+  film: Film,
+  camera: Camera,
+  palette: Palette,
+  "heart-pulse": HeartPulse,
+  dumbbell: Dumbbell,
+  bike: Bike,
+  "hand-heart": HandHeart,
+  laptop: Laptop,
+  languages: Languages,
+  "chef-hat": ChefHat,
+  baby: Baby,
+  "dice-5": Dices,
+  plane: Plane,
+};
+
+export const interestIcon = (slug: string | null | undefined): LucideIcon =>
+  (slug && INTEREST_ICONS[slug]) || Sparkles;

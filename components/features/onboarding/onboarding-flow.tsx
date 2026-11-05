@@ -4,31 +4,11 @@ import { useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { motion, useReducedMotion } from "framer-motion";
 import {
-  Activity,
   ArrowLeft,
   ArrowRight,
-  Baby,
-  Bike,
-  BookOpen,
-  Camera,
   Check,
-  ChefHat,
-  Coffee,
-  Dices,
-  Dumbbell,
-  Film,
-  Footprints,
-  HeartPulse,
-  Languages,
-  Laptop,
   Loader2,
-  Music,
-  Palette,
-  Plane,
   Sparkles,
-  Trophy,
-  Utensils,
-  type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -47,6 +27,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { INTEREST_ICONS } from "@/lib/interest-icons";
 import type { LocationCrumb } from "@/lib/geo/levels";
 import { LocationPicker } from "@/components/features/locations/location-picker";
 import { ImageUpload } from "@/components/features/uploads/image-upload";
@@ -57,30 +38,6 @@ type InterestRow = { id: number; nameEn: string; nameBn: string; icon: string };
 type Step = "interests" | "area" | "availability" | "preferences";
 
 const STEPS: Step[] = ["interests", "area", "availability", "preferences"];
-
-/** Interest icons are stored as slugs in the database. */
-const INTEREST_ICONS: Record<string, LucideIcon> = {
-  coffee: Coffee,
-  "book-open": BookOpen,
-  footprints: Footprints,
-  activity: Activity,
-  trophy: Trophy,
-  utensils: Utensils,
-  music: Music,
-  film: Film,
-  camera: Camera,
-  palette: Palette,
-  "heart-pulse": HeartPulse,
-  dumbbell: Dumbbell,
-  bike: Bike,
-  "hand-heart": HeartPulse,
-  laptop: Laptop,
-  languages: Languages,
-  "chef-hat": ChefHat,
-  baby: Baby,
-  "dice-5": Dices,
-  plane: Plane,
-};
 
 const WEEKDAY_ORDER = [0, 1, 2, 3, 4, 5, 6] as const;
 

@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Heart } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
+import { MarketingMobileNav } from "@/components/features/nav/marketing-mobile-nav";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/features/nav/locale-switcher";
 import { ThemeToggle } from "@/components/features/nav/theme-toggle";
@@ -19,6 +20,13 @@ export default async function MarketingLayout({
     getTranslations("common"),
   ]);
 
+  const sectionLinks = [
+    { href: "/#how", label: t("how.title") },
+    { href: "/#categories", label: t("activities.title") },
+    { href: "/#safety", label: t("safety.title") },
+    { href: "/#faq", label: t("faq.title") },
+  ];
+
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur">
@@ -28,18 +36,11 @@ export default async function MarketingLayout({
           </Link>
 
           <nav aria-label="Main" className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
-            <Link href="/#how" className="transition-colors hover:text-foreground">
-              {t("how.title")}
-            </Link>
-            <Link href="/#categories" className="transition-colors hover:text-foreground">
-              {t("categories.title")}
-            </Link>
-            <Link href="/#safety" className="transition-colors hover:text-foreground">
-              {t("safety.title")}
-            </Link>
-            <Link href="/#faq" className="transition-colors hover:text-foreground">
-              {t("faq.title")}
-            </Link>
+            {sectionLinks.map((link) => (
+              <Link key={link.href} href={link.href} className="transition-colors hover:text-foreground">
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
           <div className="flex items-center gap-1.5">
@@ -48,9 +49,10 @@ export default async function MarketingLayout({
             <Button asChild size="sm" variant="ghost" className="ml-1 hidden sm:inline-flex">
               <Link href="/sign-in">{tn("signIn")}</Link>
             </Button>
-            <Button asChild size="sm">
+            <Button asChild size="sm" className="hidden sm:inline-flex">
               <Link href="/sign-up">{t("cta.button")}</Link>
             </Button>
+            <MarketingMobileNav links={sectionLinks} />
           </div>
         </div>
       </header>
