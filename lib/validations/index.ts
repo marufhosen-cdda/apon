@@ -77,13 +77,8 @@ export const preferencesStepSchema = z.object({
   mode: z.enum(["offline", "online", "both"]).default("both"),
   language: z.enum(["bn", "en", "both"]).default("both"),
   bio: z.string().trim().max(400).optional().default(""),
-  avatarUrl: z
-    .string()
-    .trim()
-    .max(300)
-    .refine((v) => v === "" || /^https?:\/\//.test(v), { message: "Must be a URL" })
-    .optional()
-    .default(""),
+  // Cloudinary URL from `uploadFile`; ownership is checked in the action.
+  avatarUrl: z.string().trim().max(500).optional().default(""),
 });
 
 export const guidelinesStepSchema = z.object({
@@ -110,7 +105,7 @@ export const profileSchema = z.object({
     .optional()
     .or(z.literal("").transform(() => undefined)),
   bio: z.string().trim().max(400).optional().default(""),
-  avatarUrl: z.string().trim().max(300).optional().default(""),
+  avatarUrl: z.string().trim().max(500).optional().default(""),
   areaId: z.coerce.number().int().positive().optional().or(z.literal("").transform(() => undefined)),
 });
 
@@ -155,7 +150,7 @@ export const activityFormSchema = z
     capacity: z.coerce.number().int().min(2).max(60),
     costBdt: z.coerce.number().int().min(0).max(100000).default(0),
     womenOnly: z.union([z.literal("true"), z.literal("on"), z.literal(""), z.boolean()]).transform((v) => v === true || v === "true" || v === "on"),
-    imageUrl: z.string().trim().max(300).optional().default(""),
+    imageUrl: z.string().trim().max(500).optional().default(""),
   })
   .refine((v) => v.endTime > v.startTime, {
     message: "End time must be after start time",
@@ -182,9 +177,13 @@ export const checkinSchema = z.object({
 // Host
 // ---------------------------------------------------------------------------
 
+/** Optional upload id from a form ("" / missing → undefined). */
+const optionalId = z.coerce.number().int().positive().optional().or(z.literal("").transform(() => undefined));
+
 export const hostApplicationSchema = z.object({
   motivation: z.string().trim().min(30, "A little more detail, please").max(2000),
   experience: z.string().trim().max(2000).optional().default(""),
+  attachmentUploadId: optionalId,
 });
 
 // ---------------------------------------------------------------------------
@@ -225,6 +224,7 @@ export const reportSchema = z.object({
   targetId: z.string().min(1),
   reason: z.enum(["spam", "harassment", "inappropriate", "safety", "other"]),
   details: z.string().trim().max(1000).optional().default(""),
+  attachmentUploadId: optionalId,
 });
 
 export const blockSchema = z.object({
@@ -273,6 +273,7 @@ export const venueSchema = z.object({
   areaId: z.coerce.number().int().positive(),
   address: z.string().trim().min(5).max(300),
   mapUrl: z.string().trim().max(300).optional().default(""),
+  imageUrl: z.string().trim().max(500).optional().default(""),
   type: z.enum(["cafe", "park", "sports", "coworking", "other"]).default("cafe"),
   isPublic: z.union([z.literal("true"), z.literal("on"), z.literal(""), z.boolean()]).transform((v) => v === true || v === "true" || v === "on"),
   approved: z.union([z.literal("true"), z.literal("on"), z.literal(""), z.boolean()]).transform((v) => v === true || v === "true" || v === "on"),

@@ -39,11 +39,21 @@ const schema = z.object({
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().default("APON <onboarding@resend.dev>"),
 
-  R2_ACCOUNT_ID: z.string().optional(),
-  R2_ACCESS_KEY_ID: z.string().optional(),
-  R2_SECRET_ACCESS_KEY: z.string().optional(),
-  R2_BUCKET: z.string().optional(),
-  R2_PUBLIC_URL: z.string().optional(),
+  // Cloudinary (image + file uploads). Server-only — never exposed to the
+  // browser. Either the three separate variables or CLOUDINARY_URL
+  // (cloudinary://<api_key>:<api_secret>@<cloud_name>) may be used.
+  CLOUDINARY_CLOUD_NAME: z.string().trim().optional(),
+  CLOUDINARY_API_KEY: z.string().trim().optional(),
+  CLOUDINARY_API_SECRET: z.string().trim().optional(),
+  CLOUDINARY_URL: z
+    .string()
+    .trim()
+    .regex(/^cloudinary:\/\/[^:]+:[^@]+@.+$/, { message: "CLOUDINARY_URL must look like cloudinary://key:secret@cloud" })
+    .optional(),
+  /** Top-level folder for every asset, e.g. "apon" → apon/avatars/… */
+  CLOUDINARY_FOLDER: z.string().trim().default("apon"),
+  /** API origin; only overridden by the e2e suite's local Cloudinary stand-in. */
+  CLOUDINARY_API_BASE: z.string().url().default("https://api.cloudinary.com"),
 
   MATCHING_DAY: z.coerce.number().int().min(0).max(6).default(1),
 });
@@ -65,7 +75,23 @@ export const emailEnabled = Boolean(env.RESEND_API_KEY);
 /** True when real SMS delivery is configured (otherwise we log to console). */
 export const smsEnabled = env.SMS_PROVIDER === "twilio" && Boolean(env.TWILIO_ACCOUNT_SID);
 
-/** True when R2 uploads are configured (otherwise we write to ./public/uploads). */
-export const r2Enabled = Boolean(
-  env.R2_ACCOUNT_ID && env.R2_ACCESS_KEY_ID && env.R2_SECRET_ACCESS_KEY && env.R2_BUCKET,
-);
+/** Resolved Cloudinary credentials (separate variables win over CLOUDINARY_URL). */
+export const cloudinaryConfig = (() => {
+  const fromUrl = env.CLOUDINARY_URL?.match(/^cloudinary:\/\/([^:]+):([^@]+)@(.+)$/);
+  const apiKey = env.CLOUDINARY_API_KEY || fromUrl?.[1];
+  const apiSecret = env.CLOUDINARY_API_SECRET || (fromUrl ? decodeURIComponent(fromUrl[2]) : undefined);
+  const cloudName = env.CLOUDINARY_CLOUD_NAME || fromUrl?.[3];
+  return apiKey && apiSecret && cloudName
+    ? { apiKey, apiSecret, cloudName, folder: env.CLOUDINARY_FOLDER, apiBase: env.CLOUDINARY_API_BASE.replace(/\/$/, "") }
+    : null;
+})();
+
+/** True when uploads can be sent to Cloudinary. */
+export const uploadsEnabled = cloudinaryConfig !== null;
+
+if (!uploadsEnabled && env.CLOUDINARY_API_KEY && env.NODE_ENV !== "test") {
+  console.warn(
+    "[env] CLOUDINARY_API_KEY is set but uploads are disabled: also set CLOUDINARY_API_SECRET and " +
+      "CLOUDINARY_CLOUD_NAME (or CLOUDINARY_URL). Signed uploads need the secret.",
+  );
+}

@@ -19,6 +19,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
+import { FileUpload } from "@/components/features/uploads/file-upload";
 
 type TargetType = "user" | "activity" | "message";
 
@@ -40,6 +41,7 @@ export function ReportButton({
 }) {
   const t = useTranslations("safety.report");
   const tc = useTranslations("common");
+  const tu = useTranslations("uploads");
   const [open, setOpen] = useState(false);
   const [, formAction, pending] = useActionState(async (_prev: unknown, formData: FormData) => {
     const result = await reportAction(undefined, formData);
@@ -47,7 +49,15 @@ export function ReportButton({
       toast.success(t("submitted"));
       setOpen(false);
     } else {
-      toast.error(result.error);
+      toast.error(
+        result.error === "safety.report.already"
+          ? t("already")
+          : result.error.startsWith("uploads.errors.")
+            ? tu(result.error.replace("uploads.", "") as "errors.notYours")
+            : result.error === "errors.rateLimited"
+              ? tu("errors.rateLimited")
+              : tu("errors.generic"),
+      );
     }
     return result;
   }, { ok: false as const, error: "" });
@@ -84,6 +94,9 @@ export function ReportButton({
           <div className="space-y-2">
             <Label htmlFor="report-details">{t("details")}</Label>
             <Textarea id="report-details" name="details" maxLength={1000} />
+          </div>
+          <div>
+            <FileUpload purpose="report_evidence" name="attachmentUploadId" label={tu("attach")} />
           </div>
 
           <DialogFooter>

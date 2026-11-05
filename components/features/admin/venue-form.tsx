@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Switch } from "@/components/ui/switch";
 import { LocationPicker } from "@/components/features/locations/location-picker";
+import { ImageUpload } from "@/components/features/uploads/image-upload";
 import type { LocationCrumb } from "@/lib/geo/levels";
 
 export interface VenueFormValues {
@@ -30,6 +31,7 @@ export interface VenueFormValues {
   areaId: string;
   address: string;
   mapUrl: string;
+  imageUrl: string;
   type: string;
   isPublic: boolean;
   approved: boolean;
@@ -63,6 +65,7 @@ export function VenueForm({
       areaId: "",
       address: "",
       mapUrl: "",
+      imageUrl: "",
       type: "cafe",
       isPublic: true,
       approved: false,
@@ -81,6 +84,7 @@ export function VenueForm({
         areaId: values.areaId,
         address: values.address,
         mapUrl: values.mapUrl,
+        imageUrl: values.imageUrl,
         type: values.type,
         isPublic: values.isPublic ? "true" : "",
         approved: values.approved ? "true" : "",
@@ -182,6 +186,13 @@ export function VenueForm({
               onChange={(e) => set("mapUrl", e.target.value)}
             />
           </div>
+
+          <ImageUpload
+            purpose="venue_photo"
+            label={t("photo")}
+            value={values.imageUrl}
+            onChange={(url) => set("imageUrl", url)}
+          />
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="flex items-center justify-between gap-3 rounded-xl border border-border p-3">

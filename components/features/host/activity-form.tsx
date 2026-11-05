@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { useRouter } from "@/i18n/navigation";
 import { createActivity, updateActivity } from "@/lib/actions/host";
+import { ImageUpload } from "@/components/features/uploads/image-upload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -219,16 +220,12 @@ export function ActivityForm({
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="image">{t("image")}</Label>
-          <Input
-            id="image"
-            type="url"
-            value={values.imageUrl}
-            placeholder="https://…"
-            onChange={(e) => set("imageUrl", e.target.value)}
-          />
-        </div>
+        <ImageUpload
+          purpose="activity_cover"
+          label={t("image")}
+          value={values.imageUrl}
+          onChange={(url) => set("imageUrl", url)}
+        />
 
         <div className="flex items-start justify-between gap-4 rounded-xl border border-border bg-card p-4">
           <div>

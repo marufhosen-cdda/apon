@@ -43,13 +43,13 @@ import { PhoneVerifyCard } from "@/components/features/profile/phone-verify-card
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { LocationCrumb } from "@/lib/geo/levels";
 import { LocationPicker } from "@/components/features/locations/location-picker";
+import { ImageUpload } from "@/components/features/uploads/image-upload";
 import { SLOTS, type Slot } from "@/lib/validations";
 
 type InterestRow = { id: number; nameEn: string; nameBn: string; icon: string };
@@ -485,16 +485,13 @@ export function OnboardingFlow({
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="avatar">{t("preferences.avatar")}</Label>
-                  <Input
-                    id="avatar"
-                    type="url"
-                    value={avatarUrl}
-                    placeholder="https://…"
-                    onChange={(e) => setAvatarUrl(e.target.value)}
-                  />
-                </div>
+                <ImageUpload
+                  purpose="avatar"
+                  shape="circle"
+                  label={t("preferences.avatar")}
+                  value={avatarUrl}
+                  onChange={setAvatarUrl}
+                />
 
                 <div className="space-y-3 rounded-xl border border-border bg-muted/40 p-4">
                   <div className="flex items-center justify-between gap-3">

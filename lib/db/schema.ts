@@ -373,6 +373,43 @@ export const pollVotes = pgTable(
 );
 
 // ---------------------------------------------------------------------------
+// Uploads (Cloudinary)
+// ---------------------------------------------------------------------------
+
+/**
+ * Every file a user uploaded to Cloudinary. Profile/activity/venue images and
+ * report/host-application attachments may only reference rows owned by the
+ * person saving them, so arbitrary external URLs can't be injected.
+ */
+export const uploads = pgTable(
+  "uploads",
+  {
+    id: serial("id").primaryKey(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    /** avatar | activity_cover | venue_photo | report_evidence | host_document */
+    purpose: text("purpose").notNull(),
+    publicId: text("public_id").notNull().unique(),
+    resourceType: text("resource_type").notNull(), // image | raw
+    deliveryType: text("delivery_type").notNull(), // upload (public) | authenticated (private)
+    format: text("format").notNull(),
+    bytes: integer("bytes").notNull(),
+    width: integer("width"),
+    height: integer("height"),
+    /** CDN URL for public assets; private ones are only reachable via signed links. */
+    secureUrl: text("secure_url").notNull(),
+    originalName: text("original_name").notNull(),
+    deletedAt: timestamp("deleted_at", tz),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index("uploads_owner_idx").on(t.ownerId, t.purpose),
+    index("uploads_url_idx").on(t.secureUrl),
+  ],
+);
+
+// ---------------------------------------------------------------------------
 // Venues & activities
 // ---------------------------------------------------------------------------
 
@@ -386,6 +423,8 @@ export const venues = pgTable(
       .references(() => areas.id),
     address: text("address").notNull(),
     mapUrl: text("map_url"),
+    /** Cloudinary photo (see `uploads`). */
+    imageUrl: text("image_url"),
     type: text("type").notNull().default("cafe"), // cafe | park | sports | coworking | other
     isPublic: boolean("is_public").notNull().default(true),
     approved: boolean("approved").notNull().default(false),
@@ -463,6 +502,8 @@ export const hostApplications = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     motivation: text("motivation").notNull(),
     experience: text("experience"),
+    /** Optional supporting document (private Cloudinary asset). */
+    attachmentUploadId: integer("attachment_upload_id").references(() => uploads.id, { onDelete: "set null" }),
     status: text("status").notNull().default("pending"), // pending | approved | rejected
     reviewedBy: text("reviewed_by").references(() => users.id, { onDelete: "set null" }),
     reviewedAt: timestamp("reviewed_at", tz),
@@ -489,6 +530,8 @@ export const reports = pgTable(
     targetId: text("target_id").notNull(), // stored as text so it can hold any id
     reason: text("reason").notNull(),
     details: text("details"),
+    /** Optional evidence screenshot/PDF (private Cloudinary asset). */
+    attachmentUploadId: integer("attachment_upload_id").references(() => uploads.id, { onDelete: "set null" }),
     status: text("status").notNull().default("open"), // open | actioned | dismissed
     resolutionNote: text("resolution_note"),
     resolvedBy: text("resolved_by").references(() => users.id, { onDelete: "set null" }),
@@ -686,6 +729,7 @@ export const notificationsRelations = relations(notifications, ({ one }) => ({
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Area = typeof areas.$inferSelect;
+export type Upload = typeof uploads.$inferSelect;
 export type Interest = typeof interests.$inferSelect;
 export type Circle = typeof circles.$inferSelect;
 export type CircleMember = typeof circleMembers.$inferSelect;

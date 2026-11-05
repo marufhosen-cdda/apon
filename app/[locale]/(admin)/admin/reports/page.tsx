@@ -1,3 +1,5 @@
+import { getAttachmentLinks } from "@/lib/uploads/server";
+import { AttachmentLink } from "@/components/features/uploads/attachment-link";
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
@@ -26,6 +28,7 @@ export default async function AdminReportsPage({
   const active = STATUSES.find((s) => s === status) ?? "open";
 
   const [t, rows] = await Promise.all([getTranslations("admin.reports"), listReports(active)]);
+  const attachments = await getAttachmentLinks(rows.map((r) => r.report.attachmentUploadId));
 
   return (
     <div className="space-y-5">
@@ -74,6 +77,10 @@ export default async function AdminReportsPage({
                   <span className="font-medium">{report.reason}</span>
                   {report.details ? ` — ${report.details}` : ""}
                 </p>
+
+                {report.attachmentUploadId ? (
+                  <AttachmentLink attachment={attachments.get(report.attachmentUploadId)} />
+                ) : null}
 
                 {report.status === "open" ? <ReportActions reportId={report.id} /> : null}
               </CardContent>

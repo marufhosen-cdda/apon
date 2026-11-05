@@ -4,7 +4,7 @@
 
 Bilingual (English / বাংলা) app that matches people anywhere in Bangladesh into small weekly circles of 4–6 and gives them hosted, real-world activities to meet at.
 
-Next.js 16 (App Router, `proxy.ts`) · React 19 · Drizzle + PostgreSQL · Better Auth (email/username + password) · Resend · next-intl · Tailwind v4.
+Next.js 16 (App Router, `proxy.ts`) · React 19 · Drizzle + PostgreSQL · Better Auth (email/username + password) · Resend · Cloudinary · next-intl · Tailwind v4.
 
 ## Getting started
 
@@ -47,6 +47,34 @@ Email/username + password, built on Better Auth (`lib/auth.ts`):
   used to attach a verified number in Settings.
 - **Existing accounts** created with email codes have no password. They set one with
   *Forgot password* (the reset creates the password).
+
+## Uploads (Cloudinary)
+
+Images and files go through one server action, `uploadFile` in `lib/actions/uploads.ts`,
+and are stored on Cloudinary.
+
+| Purpose | Who | Types · max | Visibility |
+| --- | --- | --- | --- |
+| Profile photo | any member | JPG/PNG/WebP · 5 MB | public CDN |
+| Activity cover | hosts, admins | JPG/PNG/WebP · 5 MB | public CDN |
+| Venue photo | admins | JPG/PNG/WebP · 5 MB | public CDN |
+| Report evidence | any member | JPG/PNG/WebP/PDF · 8 MB | **private** (admins only) |
+| Host-application document | any member | JPG/PNG/WebP/PDF · 8 MB | **private** (admins only) |
+
+- **Credentials stay on the server.** Set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` and
+  `CLOUDINARY_API_SECRET` (or a single `CLOUDINARY_URL`). Signed uploads need the secret;
+  with only the API key, uploads stay disabled and the UI says so.
+- **Validation:** checked in the browser for quick feedback and again on the server, which is
+  what counts. The server enforces role per purpose, rate limit (20 per 10 minutes), size, and
+  the real file type from its first bytes (magic bytes). SVG, HTML and GIF are rejected
+  whatever the file is called.
+- **Safe storage:** random public ids. Images are resized when they arrive, which also strips
+  EXIF/GPS data. Private files use Cloudinary's `authenticated` type; admins open them through
+  a signed link that expires after 10 minutes.
+- **Ownership:** the `uploads` table records who uploaded what. Profiles, activities, venues,
+  reports and host applications only accept the caller's own uploads, so arbitrary URLs can't
+  be injected. A replaced or removed image is deleted from Cloudinary, and deleting an
+  account removes that member's public images.
 
 ## Locations (nationwide)
 
@@ -92,7 +120,7 @@ sends admins to the Admin Panel and everyone else to the User Panel.
 | Script | What it does |
 | --- | --- |
 | `npm run test` | unit tests (matching, waitlist, actions, geo tree, RBAC) |
-| `npm run test:e2e` | Playwright smoke test against a dev server |
+| `npm run test:e2e` | Playwright tests against a dev server. Upload tests need the dev server started with `CLOUDINARY_CLOUD_NAME=apon-test CLOUDINARY_API_KEY=test-key CLOUDINARY_API_SECRET=test-secret-0123456789 CLOUDINARY_API_BASE=http://127.0.0.1:4599`; they run a local stand-in for Cloudinary that verifies every signature |
 | `node scripts/generate-icons.mjs` | regenerate PWA icons, Apple icon and favicon from the APON mark |
 | `npm run geo:sync` | load/refresh the location tree only |
 | `npm run matching` / `reminders` / `feedback` | scheduled jobs |

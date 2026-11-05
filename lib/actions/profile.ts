@@ -7,6 +7,7 @@ import { eq, sql } from "drizzle-orm";
 import { ActionError, type ActionContext, createAction } from "@/lib/actions/action";
 import { db } from "@/lib/db";
 import { assertSelectableLocation } from "@/lib/queries/locations";
+import { cleanupReplacedImage, deleteUserPublicUploads, resolveOwnedImage } from "@/lib/uploads/server";
 import {
   activities,
   availability,
@@ -32,6 +33,7 @@ export const updateProfile = createAction({
   revalidate: (_input, user) => [`/profile/${user.id}`, "/settings", "/home"],
   handler: async (input, { user }: ActionContext): Promise<{ id: string }> => {
     if (input.areaId) await assertSelectableLocation(input.areaId);
+    const avatarUrl = await resolveOwnedImage(user.id, input.avatarUrl, "avatar", user.avatarUrl);
     const [updated] = await db
       .update(users)
       .set({
@@ -39,7 +41,7 @@ export const updateProfile = createAction({
         gender: input.gender || null,
         birthYear: input.birthYear ?? null,
         bio: input.bio || null,
-        avatarUrl: input.avatarUrl || null,
+        avatarUrl,
         areaId: input.areaId ?? null,
         updatedAt: new Date(),
       })
@@ -47,6 +49,7 @@ export const updateProfile = createAction({
       .returning({ id: users.id });
 
     if (!updated) throw new ActionError("errors.generic");
+    await cleanupReplacedImage(user.avatarUrl, avatarUrl);
     return { id: updated.id };
   },
 });
@@ -135,6 +138,9 @@ export const deleteAccount = createAction({
       await tx.execute(sql`delete from sessions where user_id = ${user.id}`);
       await tx.execute(sql`delete from accounts where user_id = ${user.id}`);
     });
+
+    // After the transaction commits: remove their public images from Cloudinary.
+    await deleteUserPublicUploads(user.id);
 
     return { deleted: true };
   },

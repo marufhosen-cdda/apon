@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import "server-only";
 
 import { and, eq, inArray } from "drizzle-orm";
@@ -14,6 +15,7 @@ import {
   updateActivitySchema,
 } from "@/lib/validations";
 import { sendHostApprovalEmail } from "@/lib/email";
+import { cleanupReplacedImage, resolveOwnedAttachment, resolveOwnedImage } from "@/lib/uploads/server";
 import { notify } from "@/lib/notify";
 void sendHostApprovalEmail;
 
@@ -45,15 +47,17 @@ export const applyToHost = createAction({
       throw new ActionError("host.apply.pending");
     }
 
+    const attachmentUploadId = await resolveOwnedAttachment(user.id, input.attachmentUploadId, "host_document");
+
     if (current) {
       await db
         .update(hostApplications)
-        .set({ motivation: input.motivation, experience: input.experience, status: "pending" })
+        .set({ motivation: input.motivation, experience: input.experience, attachmentUploadId, status: "pending" })
         .where(eq(hostApplications.id, current.id));
     } else {
       await db
         .insert(hostApplications)
-        .values({ userId: user.id, motivation: input.motivation, experience: input.experience });
+        .values({ userId: user.id, motivation: input.motivation, experience: input.experience, attachmentUploadId });
     }
 
     await notify({
@@ -104,7 +108,7 @@ export const createActivity = createAction({
         endsAt,
         capacity: input.capacity,
         costBdt: input.costBdt,
-        imageUrl: input.imageUrl || null,
+        imageUrl: await resolveOwnedImage(user.id, input.imageUrl, "activity_cover"),
         womenOnly: input.womenOnly,
         status: "pending",
       })
@@ -137,6 +141,7 @@ export const updateActivity = createAction({
     const rows = await db.select().from(activities).where(eq(activities.id, input.id)).limit(1);
     const activity = rows[0];
     if (!activity) throw new ActionError("errors.notFoundTitle");
+    const nextImage = await resolveOwnedImage(user.id, input.imageUrl, "activity_cover", activity.imageUrl);
     if (activity.hostId !== user.id && user.role !== "admin") {
       throw new ActionError("errors.unauthorized");
     }
@@ -162,13 +167,14 @@ export const updateActivity = createAction({
         endsAt,
         capacity: input.capacity,
         costBdt: input.costBdt,
-        imageUrl: input.imageUrl || null,
+        imageUrl: nextImage,
         womenOnly: input.womenOnly,
         // Host edits to a live activity go back into review.
         status: activity.status === "approved" ? "pending" : activity.status,
         updatedAt: new Date(),
       })
       .where(eq(activities.id, input.id));
+    await cleanupReplacedImage(activity.imageUrl, nextImage);
 
     return { activityId: input.id };
   },
@@ -176,7 +182,9 @@ export const updateActivity = createAction({
 
 /** Cancel an activity and tell everyone who planned to come. */
 export const cancelActivity = createAction({
-  schema: updateActivitySchema.pick({ id: true }),
+  // A plain id schema: Zod 4 forbids .pick() on refined schemas (it threw at
+  // module load and broke every Server Action on the host pages).
+  schema: z.object({ id: z.coerce.number().int().positive() }),
   revalidate: (input) => [`/activities/${input.id}`, "/host", "/activities", "/home"],
   tags: ["activities"],
   handler: async (input, { user }: ActionContext) => {

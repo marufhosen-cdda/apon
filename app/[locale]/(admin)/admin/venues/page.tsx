@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { MapPin } from "lucide-react";
 
@@ -36,8 +37,13 @@ export default async function AdminVenuesPage() {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {rows.map(({ venue, areaName }) => (
-            <Card key={venue.id}>
-              <CardContent className="space-y-3 pt-6">
+            <Card key={venue.id} className="overflow-hidden">
+              {venue.imageUrl ? (
+                <div className="relative h-32 bg-muted">
+                  <Image src={venue.imageUrl} alt={venue.name} fill sizes="(max-width: 640px) 100vw, 50vw" className="object-cover" />
+                </div>
+              ) : null}
+              <CardContent className="space-y-3 pt-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="text-base font-medium">{venue.name}</p>
                   <Badge variant="outline">{t(`types.${venue.type}`)}</Badge>
@@ -69,6 +75,7 @@ export default async function AdminVenuesPage() {
                     areaId: String(venue.areaId),
                     address: venue.address,
                     mapUrl: venue.mapUrl ?? "",
+                    imageUrl: venue.imageUrl ?? "",
                     type: venue.type,
                     isPublic: venue.isPublic,
                     approved: venue.approved,

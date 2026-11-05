@@ -4,6 +4,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { UploadsProvider } from "@/components/features/uploads/uploads-context";
+import { uploadsEnabled } from "@/lib/env";
 import { Toaster } from "sonner";
 
 import { isLocale } from "@/i18n/routing";
@@ -94,7 +96,9 @@ export default async function LocaleLayout({
           Skip to content
         </a>
         <NextIntlClientProvider locale={locale} messages={messages} timeZone="Asia/Dhaka">
-          <NuqsAdapter>{children}</NuqsAdapter>
+          <NuqsAdapter>
+            <UploadsProvider enabled={uploadsEnabled}>{children}</UploadsProvider>
+          </NuqsAdapter>
           <Toaster
             position="top-center"
             toastOptions={{

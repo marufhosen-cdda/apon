@@ -6,8 +6,8 @@
  * before being added. Photographer credits live in `photoCredits` and are
  * rendered on the Credits page and in the footer.
  *
- * If R2 uploads are configured, a user-supplied activity cover takes priority
- * over these defaults (see `activityCover`).
+ * A host-uploaded activity cover (Cloudinary) takes priority over these
+ * defaults; see `activityCover` and `lib/cloudinary.ts`.
  */
 
 export interface Photo {

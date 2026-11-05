@@ -15,12 +15,25 @@ const nextConfig: NextConfig = {
   experimental: {
     // Enables `forbidden()` / `forbidden.tsx` for role-based 403 pages.
     authInterrupts: true,
+    serverActions: {
+      // Uploads go through a Server Action (see lib/actions/uploads.ts).
+      // Largest accepted file is 8 MB (lib/uploads/policy.ts) plus form overhead.
+      bodySizeLimit: "9mb",
+    },
+    // proxy.ts buffers request bodies; keep it above the upload limit.
+    proxyClientMaxBodySize: "10mb",
   },
   images: {
     remotePatterns: [
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
+      // User uploads (avatars, activity covers, venue photos).
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
         pathname: "/**",
       },
     ],
